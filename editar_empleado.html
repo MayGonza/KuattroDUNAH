@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Empleado</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/empleado.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="form-container">
+            <h2>Editar Empleado</h2>
+            <form id="formEmpleado">
+                <label for="primer_nombre">Primer Nombre:</label>
+<input type="text" id="primer_nombre" name="primer_nombre" class="uppercase-input" required>
+
+<label for="segundo_nombre">Segundo Nombre:</label>
+<input type="text" id="segundo_nombre" name="segundo_nombre" class="uppercase-input">
+
+<label for="primer_apellido">Primer Apellido:</label>
+<input type="text" id="primer_apellido" name="primer_apellido" class="uppercase-input" required>
+
+<label for="segundo_apellido">Segundo Apellido:</label>
+<input type="text" id="segundo_apellido" name="segundo_apellido" class="uppercase-input">
+
+<label for="dni_empleado">DNI:</label>
+<input type="text" id="dni_empleado" name="dni_empleado" class="uppercase-input" maxlength="15" required placeholder="0000-0000-00000">
+
+<label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+<input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+
+<label for="fecha_contratacion">Fecha de Contratación:</label>
+<input type="date" id="fecha_contratacion" name="fecha_contratacion" required>
+
+<label for="numero_telefono">Número de Teléfono:</label>
+<input type="text" id="numero_telefono" name="numero_telefono" maxlength="8" class="uppercase-input" required placeholder="0000-0000">
+
+
+<label for="id_tipo_telefono">Tipo de Teléfono:</label>
+<select id="id_tipo_telefono" name="id_tipo_telefono" required>
+    <!-- Aquí debes poblar las opciones desde la base de datos, por ejemplo: -->
+    <option value="1">Ejecutivo</option>
+    <option value="2">Personal</option>
+</select>
+
+
+                <label for="area">Área:</label>
+                <select id="area" name="area">
+                    <!-- Opciones de área serán cargadas aquí -->
+                </select>
+
+                <label for="genero">Género:</label>
+                <select id="genero" name="genero">
+                    <!-- Opciones de género serán cargadas aquí -->
+                </select>
+
+                <label for="sucursal">Sucursal:</label>
+                <select id="sucursal" name="sucursal">
+                    <!-- Opciones de sucursal serán cargadas aquí -->
+                </select>
+
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Cargar las opciones de los menús desplegables
+        async function cargarOpciones() {
+            try {
+                // Obtener las áreas
+                const responseAreas = await fetch('http://localhost:3000/areas');
+                const areas = await responseAreas.json();
+                const areaSelect = document.getElementById('area');
+                areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.Id_area;
+                    option.textContent = area.nombre_area;
+                    areaSelect.appendChild(option);
+                });
+
+                // Obtener los géneros
+                const responseGeneros = await fetch('http://localhost:3000/generos');
+                const generos = await responseGeneros.json();
+                const generoSelect = document.getElementById('genero');
+                generos.forEach(genero => {
+                    const option = document.createElement('option');
+                    option.value = genero.Id_genero;
+                    option.textContent = genero.nombre_genero;
+                    generoSelect.appendChild(option);
+                });
+
+                // Obtener las sucursales
+                const responseSucursales = await fetch('http://localhost:3000/sucursales');
+                const sucursales = await responseSucursales.json();
+                const sucursalSelect = document.getElementById('sucursal');
+                sucursales.forEach(sucursal => {
+                    const option = document.createElement('option');
+                    option.value = sucursal.Id_sucursal;
+                    option.textContent = sucursal.nombre_sucursal;
+                    sucursalSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error al cargar opciones:', error);
+            }
+        }
+
+        // Cargar los datos del empleado para editar
+        async function cargarEmpleado() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idEmpleado = urlParams.get('id');
+
+            try {
+                const response = await fetch(`http://localhost:3000/empleado/editar/${idEmpleado}`);
+                const empleado = await response.json();
+
+                // Llenar el formulario con los datos del empleado
+                document.getElementById('dni_empleado').value = empleado.dni_empleado;
+                document.getElementById('primer_nombre').value = empleado.Primer_nombre;
+                document.getElementById('segundo_nombre').value = empleado.segundo_nombre;
+                document.getElementById('primer_apellido').value = empleado.primer_apellido;
+                document.getElementById('segundo_apellido').value = empleado.segundo_apellido;
+
+                // Convertir las fechas al formato dd/mm/yyyy para mostrar en el formulario
+                if (empleado.fecha_nacimiento) {
+                    document.getElementById('fecha_nacimiento').value = formatDateForDisplay(empleado.fecha_nacimiento);
+                }
+
+                if (empleado.fecha_contratacion) {
+                    document.getElementById('fecha_contratacion').value = formatDateForDisplay(empleado.fecha_contratacion);
+                }
+
+                document.getElementById('area').value = empleado.Id_area;
+                document.getElementById('genero').value = empleado.Id_genero;
+                document.getElementById('sucursal').value = empleado.Id_sucursal;
+                document.getElementById('numero_telefono').value,
+                document.getElementById('id_tipo_telefono').value
+
+            } catch (error) {
+                console.error('Error al cargar datos del empleado:', error);
+            }
+        }
+
+        // Convertir la fecha al formato dd/mm/yyyy para mostrar
+        function formatDateForDisplay(date) {
+            const d = new Date(date);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Enviar los cambios al servidor para actualizar el empleado
+        async function actualizarEmpleado(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const idEmpleado = urlParams.get('id');
+
+            const empleadoData = {
+                dni_empleado: document.getElementById('dni_empleado').value,
+                Primer_nombre: document.getElementById('primer_nombre').value,
+                segundo_nombre: document.getElementById('segundo_nombre').value,
+                primer_apellido: document.getElementById('primer_apellido').value,
+                segundo_apellido: document.getElementById('segundo_apellido').value,
+                fecha_nacimiento: formatDateForDatabase(document.getElementById('fecha_nacimiento').value),
+                fecha_contratacion: formatDateForDatabase(document.getElementById('fecha_contratacion').value),
+                Id_area: document.getElementById('area').value,
+                Id_genero: document.getElementById('genero').value,
+                Id_sucursal: document.getElementById('sucursal').value
+            };
+
+            try {
+                const response = await fetch(`http://localhost:3000/empleado/${idEmpleado}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(empleadoData)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Empleado actualizado correctamente');
+                    window.location.href = 'empleado.html'; // Redirige al listado de empleados
+                } else {
+                    alert('Error al actualizar empleado: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error al actualizar empleado:', error);
+            }
+        }
+
+        // Función para convertir la fecha al formato yyyy/mm/dd para enviar al servidor
+        function formatDateForDatabase(date) {
+            const [day, month, year] = date.split('/');
+            return `${year}/${month}/${day}`;
+        }
+
+        // Función para formatear el DNI en tiempo real y limitar a 13 dígitos
+        document.getElementById('dni_empleado').addEventListener('input', function(event) {
+            let dni = event.target.value.replace(/[^\d]/g, ''); // Solo permite números
+
+            // Limitar a 13 dígitos
+            if (dni.length > 13) {
+                dni = dni.slice(0, 13);
+            }
+
+            // Aplicar el formato
+            if (dni.length > 4 && dni.length <= 8) {
+                dni = dni.replace(/(\d{4})(\d+)/, '$1-$2');
+            } else if (dni.length > 8) {
+                dni = dni.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3');
+            }
+
+            event.target.value = dni;
+        });
+
+        // Ejecutar las funciones al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarOpciones();
+            cargarEmpleado();
+
+            const form = document.getElementById('formEmpleado');
+            form.addEventListener('submit', actualizarEmpleado);
+        });
+    </script>
+</body>
+</html>

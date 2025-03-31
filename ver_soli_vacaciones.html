@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Solicitud</title>
+    <link rel="stylesheet" href="public/css/styles_fsv.css">
+</head>
+
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo"
+                    class="nav-logo-img">
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseñarecurso.html">Cambiar contraseña</a>
+                    <a href="index.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Todo lo que vayan a agregar -->
+    <main class="main-content" id="mainContent">
+        <!-- Contenedor principal -->
+        <div class="form-container">
+
+            <!-- Cabecera -->
+            <header class="header">
+                <div class="logo">
+                    <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png"
+                        alt="Logo_Kuattro" />
+                </div>
+            </header>
+            <div class="titulo">
+                <h1>SOLICITUD DE VACACIONES</h1>
+            </div>
+            <hr>
+            <div class="fecha">
+                <p>Fecha: <span id="fechaActual"></span></p>
+            </div>
+
+            <!-- Formulario de solicitud de vacaciones -->
+            <form id="vacacionesForm">
+
+                <!-- Contenedor de datos personales -->
+                <div class="grupo borde">
+                    <label for="nombre">Dirigido a: <b>Departamento de Recursos Humanos</b></label>
+                    <div class="campo">
+                        <label for="nombre">Nombre del colaborador:</label>
+                        <input type="text" id="nombre" name="nombre" readonly>
+                    </div>
+                    <div class="campo1">
+                        <label for="codigo">Código:</label>
+                        <input type="text" id="codigo" name="codigo" readonly>
+
+                        <label for="posicion">Posición:</label>
+                        <input type="text" id="posicion" name="posicion" readonly>
+
+                        <label for="sede">Sede:</label>
+                        <input type="text" id="sede" name="sede" readonly>
+                    </div>
+                </div>
+
+                <!-- Contenedor de solicitud de vacaciones -->
+                <div class="grupo borde">
+                    <div class="campo2">
+                        <label for="dias">Por este medio solicito</label>
+                        <input type="number" id="diasSolicitados" name="diasSolicitados" step="0.5" min="0.5" readonly>
+                        <label for="dias">días de vacaciones, en las siguientes fechas:</label>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaInicio">Iniciando el</label>
+                        <input type="date" id="fechaInicio" name="fechaInicio" readonly>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaFin">hasta el día</label>
+                        <input type="date" id="fechaFin" name="fechaFin" readonly>
+                        <label for="fechaRegreso">regresando a mis labores</label>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaRegreso">cotidianas el</label>
+                        <input type="date" id="fechaRegreso" name="fechaRegreso" readonly>
+                    </div>
+                </div>
+
+                <!-- Tabla de días acumulados, otorgados y pendientes -->
+                <div class="grupo borde">
+                    <table class="tabla-vacaciones">
+                        <thead>
+                            <tr>
+                                <th>Días Acumulados</th>
+                                <th>Días Otorgados</th>
+                                <th>Días Pendientes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="number" id="diasAcumulados" name="diasAcumulados" readonly></td>
+                                <td><input type="number" id="diasOtorgados" name="diasOtorgados" readonly></td>
+                                <td><input type="number" id="diasPendientes" name="diasPendientes" readonly></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Observaciones -->
+                    <label for="observaciones">Observaciones:</label>
+                    <div class="campo">
+                        <textarea id="observaciones" name="observaciones" rows="5" readonly></textarea>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Botón de envío -->
+            <div class="botones">
+                <button class="btnPDF" onclick="imprimirFormulario()">Imprimir o Generar PDF</button>
+                <button type="reset" class="cancelBtn"
+                    onclick="window.location.href='hist_solicitudes.html'">Cancelar</button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+
+        window.onbeforeunload = function () {
+            // Establece la posición de desplazamiento antes de que la página se recargue
+            window.scrollTo(0, 0); // Esto asegura que la página siempre comience desde la parte superior al recargarse
+        };
+
+
+        // Ajustar tamaño del input
+        function adjustInputWidth(input) {
+            // Crear un span temporal para medir el ancho
+            const tempSpan = document.createElement("span");
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.position = "absolute";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.font = window.getComputedStyle(input).font;
+            tempSpan.textContent = input.value;
+
+            document.body.appendChild(tempSpan);
+
+            // Ajustar el tamaño del input según el ancho del span
+            input.style.width = `${tempSpan.offsetWidth + 25}px`;  // Añadir un pequeño margen
+
+            document.body.removeChild(tempSpan);  // Eliminar el span temporal
+        }
+
+
+        // Validacion con el BACKEND
+
+        function cargarDatosSolicitud() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idVerSolicitud = urlParams.get('id');
+
+            fetch(`http://localhost:3000/datos_solicitud/${idVerSolicitud}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data) {
+                        const {
+                            primer_nombre,
+                            segundo_nombre,
+                            primer_apellido,
+                            segundo_apellido,
+                            cod_empleado,
+                            nombre_cargo,
+                            nombre_sucursal,
+                            fecha_solicitud,
+                            fecha_inicio_solicitud,
+                            fecha_final_solicitud,
+                            fecha_regreso,
+                            dias_solicitados,
+                            dias_acumulados,
+                            dias_otorgados,
+                            dias_pendientes,
+                            observaciones_solicitud } = data;
+
+                        document.getElementById("fechaActual").textContent = new Date(fecha_solicitud).toLocaleDateString("es-ES");
+                        document.getElementById("nombre").value = `${primer_nombre} ${segundo_nombre || ''} ${primer_apellido} ${segundo_apellido || ''}`;
+                        document.getElementById("codigo").value = cod_empleado;
+                        document.getElementById("posicion").value = nombre_cargo;
+                        document.getElementById("sede").value = nombre_sucursal;
+                        document.getElementById("diasSolicitados").value = formatearNumero(dias_solicitados);
+                        document.getElementById("fechaInicio").value = formatoFecha(fecha_inicio_solicitud);
+                        document.getElementById("fechaFin").value = formatoFecha(fecha_final_solicitud);
+                        document.getElementById("fechaRegreso").value = formatoFecha(fecha_regreso);
+                        document.getElementById("diasAcumulados").value = formatearNumero(dias_acumulados);
+                        document.getElementById("diasOtorgados").value = formatearNumero(dias_otorgados);
+                        document.getElementById("diasPendientes").value = formatearNumero(dias_pendientes);
+                        document.getElementById("observaciones").value = observaciones_solicitud;
+
+                        // Ajustar el tamaño de los inputs
+                        adjustInputWidth(document.getElementById("codigo"));
+                        adjustInputWidth(document.getElementById("posicion"));
+                        adjustInputWidth(document.getElementById("sede"));
+                    } else {
+                        console.log('Ocurrio un error');
+                    }
+                })
+                .catch((error) => console.error(error));
+        }
+
+        // Llamar a la función cuando la página se haya cargado completamente
+        document.addEventListener("DOMContentLoaded", cargarDatosSolicitud);
+
+
+        function formatoFecha(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+
+        function formatearNumero(numero) {
+            // Verificamos si la parte decimal es diferente de cero
+            if (numero % 1 !== 0) {
+                // Si tiene decimales, lo dejamos como decimal
+                return parseFloat(numero).toFixed(1);  // Usamos 1 decimal
+            } else {
+                // Si es entero, lo dejamos como entero (sin decimales)
+                return parseFloat(numero).toFixed(0);  // Sin decimales
+            }
+        }
+
+        //Imprimir o generar PDF
+        function imprimirFormulario() {
+            window.print();
+        }
+
+    </script>
+
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles y permisos</title>
+    <link rel="stylesheet" href="public/css/mantenimiento.css">
+    <!-- Agregar jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Agregar AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.1/jspdf.plugin.autotable.min.js"></script>
+
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+            <input type="text" class="search-bar" id="searchBar" placeholder="Buscar...">
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">Seguridad <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">Mantenimiento <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                </li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+
+    <main class="main-content">
+        <section class="table-container">
+            <h2>Roles</h2>
+            <button class="btn-createR" onclick="abrirModalCrear()">Crear</button> 
+            <table class="roles-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Rol</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="roles-tbody">
+                    <!-- Roles dinámicos -->
+                </tbody>
+            </table>
+            <button class="btn-impriPDF" onclick="imprimirFormulario()">Imprimir</button>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- MODAL PARA CREAR ROL -->
+    <div id="modalCrearRol" class="modal">
+        <div class="modal-content">
+            <h2>Crear Rol</h2>
+            <form id="formCrearRol">
+                <label for="nombreRol">Nombre:</label>
+                <input type="text" id="nombreRol" required>
+
+                <label for="descripcionRol">Descripción:</label>
+                <input type="text" id="descripcionRol" required>
+
+                <button type="submit" class="btn-create">Guardar</button>
+                <button type="button" class="btn-cancel" onclick="cerrarModalCrear()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA EDITAR ROL -->
+    <div id="modalEditarRol" class="modal">
+        <div class="modal-content">
+            <h2>Editar Rol</h2>
+            <form id="formEditarRol">
+                <input type="hidden" id="idRol">
+                
+                <label for="editNombreRol">Nombre:</label>
+                <input type="text" id="editNombreRol" required>
+
+                <label for="editDescripcionRol">Descripción:</label>
+                <input type="text" id="editDescripcionRol" required>
+
+                <button type="submit" class="btn-create">Actualizar</button>
+                <button type="button" class="btn-cancel" onclick="cerrarModalEditar()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+<!-- MODAL PARA ASIGNAR PERMISOS -->
+<div id="modalPermisos" class="modal">
+    <div class="modal-contentP">
+        <h2>Asignar Permisos</h2>
+        <input type="hidden" id="idRolPermisos">
+        
+        <div class="permissions-table-container">
+            <table class="permissions-table">
+                <thead>
+                    <tr>
+                        <th>Crear</th>
+                        <th>Eliminar</th>
+                        <th>Actualizar</th>
+                        <th>Consultar</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyPermisos">
+                    <!-- Aquí se llenarán los permisos dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <button class="btn-create" onclick="guardarPermisos()">Guardar</button>
+        <button class="btn-cancel" onclick="cerrarModalPermisos()">Cancelar</button>
+    </div>
+</div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarRoles();
+        });
+
+        async function cargarRoles() {
+            const response = await fetch('http://localhost:3000/roles');
+            const roles = await response.json();
+            const tbody = document.getElementById("roles-tbody");
+            tbody.innerHTML = "";
+
+            roles.forEach(rol => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>${rol.Id_rol}</td>
+                    <td>${rol.rol}</td>
+                    <td>${rol.descripcion || 'N/A'}</td>
+                    <td>
+                        <button class="btn-permissions" onclick="abrirModalPermisos(${rol.Id_rol})">Permisos</button>
+                        <button class="btn-edit" onclick="abrirModalEditar(${rol.Id_rol}, \`${rol.rol}\`, \`${rol.descripcion || ''}\`)">Editar</button>
+                        <button class="btn-delete" onclick="eliminarRol(${rol.Id_rol})">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(fila);
+            });
+        }
+
+        
+document.addEventListener("DOMContentLoaded", function () {
+    // Asegurar que el modal esté oculto al cargar la página
+    let modal = document.getElementById('modalCrearRol');
+    modal.style.display = 'none';
+});
+
+        // MODAL CREAR
+        function abrirModalCrear() {
+            document.getElementById("nombreRol").value = "";
+            document.getElementById("descripcionRol").value = "";
+            document.getElementById("modalCrearRol").style.display = 'flex';
+        }
+
+        function cerrarModalCrear() {
+            document.getElementById("modalCrearRol").style.display = 'none';
+        }
+
+        // MODAL EDITAR
+        function abrirModalEditar(id, nombre, descripcion) {
+            document.getElementById("idRol").value = id;
+            document.getElementById("editNombreRol").value = nombre;
+            document.getElementById("editDescripcionRol").value = descripcion;
+            document.getElementById("modalEditarRol").style.display = 'flex';
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById("modalEditarRol").style.display = 'none';
+        }
+
+
+        
+document.addEventListener("DOMContentLoaded", function () {
+    // Asegurar que el modal esté oculto al cargar la página
+    let modal = document.getElementById('modalEditarRol');
+    modal.style.display = 'none';
+});
+
+        // CREAR ROL
+        document.getElementById("formCrearRol").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const nombreRol = document.getElementById("nombreRol").value;
+            const descripcionRol = document.getElementById("descripcionRol").value;
+
+            const datosRol = {
+                rol: nombreRol,
+                descripcion: descripcionRol
+            };
+
+            const response = await fetch("http://localhost:3000/roles", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosRol)
+            });
+
+            if (response.ok) {
+                alert("Rol creado correctamente");
+                cerrarModalCrear();
+                cargarRoles();
+            } else {
+                alert("Error al crear el rol");
+            }
+        });
+
+        
+
+        // EDITAR ROL
+        document.getElementById("formEditarRol").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const idRol = document.getElementById("idRol").value;
+            const nombreRol = document.getElementById("editNombreRol").value;
+            const descripcionRol = document.getElementById("editDescripcionRol").value;
+
+            const datosRol = {
+                rol: nombreRol,
+                descripcion: descripcionRol
+            };
+
+            const response = await fetch(`http://localhost:3000/roles/${idRol}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosRol)
+            });
+
+            if (response.ok) {
+                alert("Rol actualizado correctamente");
+                cerrarModalEditar();
+                cargarRoles();
+            } else {
+                alert("Error al actualizar el rol");
+            }
+        });
+
+        // ELIMINAR ROL
+        async function eliminarRol(id) {
+            if (!confirm("¿Seguro que deseas eliminar este rol?")) return;
+            await fetch(`http://localhost:3000/roles/${id}`, { method: 'DELETE' });
+            cargarRoles();
+        }
+
+
+
+        function toggleMenu() {
+        const sideMenu = document.getElementById('sideMenu');
+        const mainContent = document.getElementById('mainContent');
+        sideMenu.classList.toggle('open');
+        mainContent.classList.toggle('shifted');
+    }
+    function toggleUserMenu() {
+        const userDropdown = document.getElementById('userDropdown');
+        userDropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.user-button')) {
+            const dropdowns = document.getElementsByClassName('user-dropdown');
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Asegurar que el modal esté oculto al cargar la página
+    let modal = document.getElementById('modalPermisos');
+    modal.style.display = 'none';
+});
+
+ // ABRIR MODAL Y CARGAR PERMISOS DEL ROL
+ async function abrirModalPermisos(idRol) {
+        document.getElementById("idRolPermisos").value = idRol;
+
+        const response = await fetch(`http://localhost:3000/permisos/rol/${idRol}`);
+        const permisos = await response.json();
+
+        const tbody = document.getElementById("tbodyPermisos");
+        tbody.innerHTML = ""; // Limpiar tabla antes de llenar
+
+        permisos.forEach(permiso => {
+            const fila = `
+                <tr>
+                    <td><input type="checkbox" class="permiso-checkbox" data-id="${permiso.id_permiso}" data-tipo="creacion" ${permiso.permiso_creacion == 1 ? 'checked' : ''}></td>
+                    <td><input type="checkbox" class="permiso-checkbox" data-id="${permiso.id_permiso}" data-tipo="eliminacion" ${permiso.permiso_eliminacion == 1 ? 'checked' : ''}></td>
+                    <td><input type="checkbox" class="permiso-checkbox" data-id="${permiso.id_permiso}" data-tipo="actualizacion" ${permiso.permiso_actualizacion == 1 ? 'checked' : ''}></td>
+                    <td><input type="checkbox" class="permiso-checkbox" data-id="${permiso.id_permiso}" data-tipo="consultar" ${permiso.permiso_consultar == 1 ? 'checked' : ''}></td>
+                </tr>
+            `;
+            tbody.innerHTML += fila;
+        });
+
+        document.getElementById("modalPermisos").style.display = 'flex';
+    }
+
+    // GUARDAR PERMISOS
+    async function guardarPermisos() {
+        const checkboxes = document.querySelectorAll(".permiso-checkbox");
+        const permisosActualizados = [];
+
+        checkboxes.forEach(checkbox => {
+            const idPermiso = checkbox.getAttribute("data-id");
+            const tipo = checkbox.getAttribute("data-tipo");
+
+            let permisoExistente = permisosActualizados.find(p => p.id_permiso === idPermiso);
+
+            if (!permisoExistente) {
+                permisoExistente = { id_permiso: idPermiso, permiso_creacion: 0, permiso_eliminacion: 0, permiso_actualizacion: 0, permiso_consultar: 0 };
+                permisosActualizados.push(permisoExistente);
+            }
+
+            permisoExistente[`permiso_${tipo}`] = checkbox.checked ? 1 : 0;
+        });
+
+        console.log("Permisos que se enviarán:", permisosActualizados);
+
+        const response = await fetch("http://localhost:3000/permisos/actualizar", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(permisosActualizados) // Enviar el array directamente
+});
+        if (response.ok) {
+            alert("Permisos actualizados correctamente");
+            cerrarModalPermisos();
+        } else {
+            alert("Error al actualizar permisos");
+        }
+    }   
+
+
+// CERRAR MODAL
+function cerrarModalPermisos() {
+    document.getElementById("modalPermisos").style.display = 'none';
+}
+
+
+    
+
+    function toggleSubMenu(event) {
+event.preventDefault(); // Evita la navegación predeterminada
+let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+let submenu = parentLi.querySelector('.submenu');
+let arrow = parentLi.querySelector('.arrow');
+
+if (submenu) {
+    submenu.classList.toggle('active'); // Alterna visibilidad del menú
+    parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+}
+}
+
+document.getElementById("searchBar").addEventListener("input", function () {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#roles-tbody tr");
+
+    rows.forEach(row => {
+        let idRol = row.children[0].textContent.toLowerCase(); // Obtiene el ID del rol
+        let rol = row.children[1].textContent.toLowerCase(); // Obtiene el nombre del rol
+        let descripcion = row.children[2].textContent.toLowerCase(); // Obtiene la descripción
+
+        if (idRol.includes(filter) || rol.includes(filter) || descripcion.includes(filter)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+
+
+
+
+
+//Imprimir o generar PDF
+function imprimirFormulario() {
+            window.print();
+        }
+
+
+
+    </script>
+</body>
+</html>

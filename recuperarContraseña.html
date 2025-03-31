@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/recuperacion.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="login.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h2>Recuperación de Contraseña</h2>
+            <p>Ingresa tu correo para recibir un código de verificación</p>
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+            <button id="sendOtpBtn">Enviar Código</button>
+            <a href="login.html">Regresar al inicio</a>
+            <p id="estadoMensaje" style="color: white; display: none;"></p>
+        </div>
+    </main>
+
+    <div id="otpModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Verificación OTP</h2>
+            <p>Ingresa el código de verificación enviado a tu correo</p>
+            <input type="text" id="otpInput" placeholder="Código OTP" maxlength="6">
+            <button id="verifyOtpBtn">Verificar Código</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sendOtpBtn = document.getElementById("sendOtpBtn");
+            const otpModal = document.getElementById("otpModal");
+            const closeModal = document.querySelector(".close");
+            const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+            const estadoMensaje = document.getElementById("estadoMensaje");
+
+            // Enviar OTP
+            sendOtpBtn.addEventListener("click", async function (event) {
+                event.preventDefault();
+                const emailInput = document.getElementById("email").value;
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                if (!emailPattern.test(emailInput)) {
+                    alert("Por favor, ingresa un correo válido.");
+                    return;
+                }
+
+                try {
+                    // Verificar el estado del usuario primero
+                    const responseEstado = await fetch("http://localhost:3000/verificar-estado", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: emailInput }),
+                    });
+
+                    const estadoData = await responseEstado.json();
+                    if (responseEstado.ok) {
+                        if (estadoData.id_estado_usuario === 1) {
+                            // Estado activo, permitir recuperar contraseña
+                            const responseOtp = await fetch("http://localhost:3000/recuperar-password", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ email: emailInput }),
+                            });
+
+                            const data = await responseOtp.json();
+                            if (responseOtp.ok) {
+                                alert("Código enviado. Revisa tu correo.");
+                                otpModal.style.display = "block";
+                            } else {
+                                alert("Error al enviar el código: " + data.mensaje);
+                            }
+                        } else if (estadoData.id_estado_usuario === 2) {
+                            // Usuario inactivo
+                            estadoMensaje.style.display = "block";
+                            estadoMensaje.textContent = "Tu usuario está inactivo. No puedes recuperar la contraseña.";
+                        } else if (estadoData.id_estado_usuario === 3) {
+                            // Estado 3, permitir recuperar contraseña y cambiar a estado 1
+                            const responseUpdateEstado = await fetch("http://localhost:3000/actualizar-estado-usuario", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ email: emailInput, id_estado_usuario: 1 }),
+                            });
+
+                            const updateData = await responseUpdateEstado.json();
+                            if (responseUpdateEstado.ok) {
+                                // Enviar el código OTP
+                                const responseOtp = await fetch("http://localhost:3000/recuperar-password", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ email: emailInput }),
+                                });
+
+                                const data = await responseOtp.json();
+                                if (responseOtp.ok) {
+                                    alert("Código enviado. Revisa tu correo.");
+                                    otpModal.style.display = "block";
+                                } else {
+                                    alert("Error al enviar el código: " + data.mensaje);
+                                }
+                            } else {
+                                alert("Error al actualizar el estado del usuario.");
+                            }
+                        }
+                    } else {
+                        alert("Error al verificar el estado del usuario.");
+                    }
+                } catch (error) {
+                    alert("Error de conexión con el servidor.");
+                }
+            });
+
+            // En la sección de Verificar OTP
+            verifyOtpBtn.addEventListener("click", async function () {
+                const emailInput = document.getElementById("email").value;
+                const otpInput = document.getElementById("otpInput").value;
+
+                if (otpInput.trim() === '') {
+                    alert("Por favor, ingresa el código OTP.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("http://localhost:3000/verify-otp", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: emailInput, otp: otpInput }),
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert("Código correcto. Redirigiendo...");
+                        // Guardar el correo en localStorage
+                        localStorage.setItem('emailRecuperacion', emailInput);
+                        // Redirigir a cambiarcontraseñarecu.html
+                        window.location.href = "cambiarcontraseñarecu.html";
+                    } else {
+                        alert("Código incorrecto. Intenta de nuevo.");
+                    }
+                } catch (error) {
+                    alert("Error de conexión con el servidor.");
+                }
+            });
+
+            // Cerrar Modal
+            closeModal.addEventListener("click", function () {
+                otpModal.style.display = "none";
+            });
+
+            window.addEventListener("click", function (event) {
+                if (event.target === otpModal) {
+                    otpModal.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/styles_usuarios.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="Usuario.html">Usuario</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                </li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content" id="mainContent">
+        <h1>Respaldo y Restauración</h1>
+        <div class="backup-container">
+            <button onclick="descargarRespaldo()" class="backup-button">
+                📥 Descargar respaldo
+            </button>
+
+            <button onclick="restaurarBD()" class="backup-restore-button">
+                ♻️ Restaurar respaldo
+            </button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        function descargarRespaldo() {
+            Swal.fire({
+                title: "¿Deseas generar un respaldo?",
+                text: "Se descargará un archivo .sql de seguridad.",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Sí, respaldar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#007bff"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    fetch("http://localhost:3000/respaldo")
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = "respaldo_pgrrhh.sql"; // Nombre del archivo de respaldo
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                        })
+                        .catch(error => {
+                            Swal.fire("❌ Error", "Hubo un error al generar el respaldo.", "error");
+                        });
+                }
+            });
+        }
+
+        function restaurarBD() {
+            Swal.fire({
+                title: '¿Restaurar base de datos?',
+                text: 'Asegúrate de haber subido tu archivo .sql al servidor.',
+                input: 'file', // Cambiamos el tipo de input a 'file'
+                inputAttributes: {
+                    accept: '.sql', // Sólo aceptar archivos .sql
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Restaurar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: (file) => {
+                    if (!file) {
+                        return Swal.showValidationMessage('Debes seleccionar un archivo');
+                    }
+                    return file[0]; // Tomamos el primer archivo seleccionado
+                }
+            }).then(result => {
+                if (result.isConfirmed && result.value) {
+                    const formData = new FormData();
+                    formData.append('archivo', result.value); // Añadimos el archivo al FormData
+
+                    fetch("http://localhost:3000/restaurar", {
+                        method: "POST",
+                        body: formData // Enviamos el archivo en el cuerpo de la solicitud
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.fire("✅ Restaurado", data.mensaje, "success");
+                    })
+                    .catch(() => {
+                        Swal.fire("❌ Error", "No se pudo restaurar la base de datos", "error");
+                    });
+                }
+            });
+        }
+    </script>
+
+<script>
+function toggleMenu() {
+        const sideMenu = document.getElementById('sideMenu');
+        const mainContent = document.querySelector('.main-content');
+        sideMenu.classList.toggle('open');
+        mainContent.classList.toggle('shifted');
+    }
+    function toggleUserMenu() {
+        const userDropdown = document.getElementById('userDropdown');
+        userDropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.user-button')) {
+            const dropdowns = document.getElementsByClassName('user-dropdown');
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+    function toggleSubMenu(event) {
+    event.preventDefault(); // Evita la navegación predeterminada
+    let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+    let submenu = parentLi.querySelector('.submenu');
+    let arrow = parentLi.querySelector('.arrow');
+
+    if (submenu) {
+        submenu.classList.toggle('active'); // Alterna visibilidad del menú
+        parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+    }
+    }
+</script>
+</body>
+</html>

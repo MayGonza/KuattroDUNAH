@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000000;
+    margin: 0;
+}
+
+.login-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #000000;
+}
+
+.input-container,
+.password-container {
+    position: relative;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.input-container input,
+.password-container input {
+    width: 100%;
+    padding: 10px;
+    padding-right: 35px; /* Espacio para el candado */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Evita cambios de tamaño */
+}
+
+/* Estilos específicos para la contraseña */
+.password-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0px;
+    background: transparent !important; /* Asegura que no tenga fondo */
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 20px !important; 
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -6%;
+}
+
+.toggle-password:hover,
+.toggle-password:focus {
+    background: transparent !important; /* Evita fondo en hover y focus */
+    outline: none;
+    border: none;
+}
+
+.toggle-password i {
+    font-size: 15px;
+    color: #333;
+    pointer-events: none; /* Evita interacción con el ícono */
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #23eb00;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-container button:hover {
+    background-color: #1cb800;
+}
+
+.register-link {
+    margin-top: 10px;
+    display: block;
+    font-size: 14px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+}
+
+.footer p {
+color: white;
+}
+
+p {
+    color: #000000; /* Cambia este color al que prefieras */
+}
+
+p a {
+    color: #0303c3e2; /* Cambia este color al que prefieras */
+    text-decoration: none; /* Elimina el subrayado */
+    font-weight: bold; /* Opcional: hace el texto más grueso */
+}
+
+p a:hover {
+    color: #0303c3e2; /* Cambia de color al pasar el mouse */
+    text-decoration: underline; /* Opcional: subraya al pasar el mouse */
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil de Usuario</title>
+    <link rel="stylesheet" href="public/css/styles.css" />
+    <link rel="stylesheet" href="public/css/perfil.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img" />
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <p id="usuarioActivo" class="usuario-activo"></p>
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">Seguridad <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">Mantenimiento <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                </li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content" id="mainContent">
+        <section class="perfil-card">
+            <h2>Perfil del Usuario</h2>
+            <div class="perfil-container">
+                <div class="perfil-foto">
+                    <img src="/imagenes/default-avatar.png" alt="Foto de perfil" id="fotoUsuario" />
+                    <input type="file" id="inputFoto" accept="image/*" onchange="mostrarVistaPrevia(event)" />
+                </div>
+                <div class="perfil-info">
+                    <p><strong>Nombre:</strong> <span id="nombreUsuario">Cargando...</span></p>
+                    <p><strong>Correo:</strong> <span id="correoUsuario">Cargando...</span></p>
+                    <p><strong>Usuario:</strong> <span id="usuario">Cargando...</span></p>
+                    <p><strong>Cargo:</strong> <span id="cargoUsuario">Cargando...</span></p>
+                    <p><strong>Sucursal:</strong> <span id="sucursalUsuario">Cargando...</span></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('open');
+            document.getElementById('mainContent').classList.toggle('shifted');
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+
+        function toggleSubMenu(event) {
+            event.preventDefault();
+            let parentLi = event.target.closest('.has-submenu');
+            let submenu = parentLi.querySelector('.submenu');
+            submenu.classList.toggle('active');
+            parentLi.classList.toggle('open');
+        }
+
+        function mostrarVistaPrevia(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                document.getElementById('fotoUsuario').src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("http://localhost:3000/datos_empleado_solicitud")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("nombreUsuario").innerText = `${data.primer_nombre} ${data.segundo_nombre} ${data.primer_apellido} ${data.segundo_apellido}`;
+                    document.getElementById("cargoUsuario").innerText = data.nombre_cargo || "Sin cargo asignado";
+                    document.getElementById("sucursalUsuario").innerText = data.nombre_sucursal || "Sin sucursal";
+                    document.getElementById("usuario").innerText = sessionStorage.getItem("usuario") || "-";
+                    document.getElementById("correoUsuario").innerText = data.email || "-";
+                    document.getElementById("usuarioActivo").innerText = sessionStorage.getItem("usuario") || "Usuario";
+                })
+                .catch(() => {
+                    alert("Error al cargar el perfil del usuario");
+                });
+        });
+
+        lucide.createIcons();
+    </script>
+
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

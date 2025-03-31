@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrarse</title>
+    <link rel="stylesheet" href="public/css/styles_autoregistro.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="login.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo"
+                    class="nav-logo-img" />
+            </a>
+        </div>
+    </header>
+
+    <!-- Todo lo que vayan a agregar -->
+    <main class="main-content">
+        <form id="registrationForm" autocomplete="off">
+            <h2>Registrarse</h2>
+            <hr />
+
+            <input type="text" id="numeroID" name="numeroID" maxlength="15" required
+                placeholder="Número de identidad" />
+            <div id="identityMessage"></div>
+
+            <input type="text" id="nombres" name="nombres" readonly placeholder="Nombres" />
+
+            <input type="text" id="apellidos" name="apellidos" readonly placeholder="Apellidos" />
+            <div id="nameMessage"></div>
+
+            <input type="text" id="usuario" name="usuario" required placeholder="Nombre de usuario" />
+            <div id="userMessage"></div>
+
+            <input type="email" id="email" name="email" required placeholder="Correo electrónico" />
+
+            <div class="password-container">
+                <input type="password" id="password" name="password" required placeholder="Contraseña" />
+                <div id="eyeIcon1" class="eye-icon">
+                    <img src="public/imagenes/noMostrar.png" alt="Ver contraseña" id="eyeImage1">
+                </div>
+            </div>
+
+            <div id="passwordRequerimientos" class="requirements">
+                <ul>
+                    <li id="lengthRequirement">Debe tener al menos 8 caracteres.</li>
+                    <li id="uppercaseRequirement">Debe contener al menos una letra mayúscula.</li>
+                    <li id="lowercaseRequirement">Debe contener al menos una letra minúscula.</li>
+                    <li id="digitRequirement">Debe contener al menos un número.</li>
+                    <li id="specialCharRequirement">Debe contener al menos un carácter especial (Ej: @, $, %, etc.).
+                    </li>
+                </ul>
+            </div>
+
+            <div class="password-container">
+                <input type="password" id="confirmacionPassword" name="confirmacionPassword" required
+                    placeholder="Confirma tu contraseña" />
+                <div id="eyeIcon2" class="eye-icon">
+                    <img src="public/imagenes/noMostrar.png" alt="Ver contraseña" id="eyeImage2">
+                </div>
+            </div>
+            <div id="passwordMatchMessage"></div>
+
+            <button type="submit" id="registerButton">Registrarme</button>
+
+            <p>
+                ¿Ya estás registrado(a)? <a href="login.html" id="yaRegistrado">Iniciar Sesión</a>
+            </p>
+        </form>
+    </main>
+
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // VALIDACIÓN DE LOS INPUTS
+        // Variables
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmacionPassword");
+        const identityInput = document.getElementById("numeroID");
+        const userInput = document.getElementById("usuario");
+        const passwordRequirements = document.getElementById("passwordRequerimientos");
+        const passwordMatchMessage = document.getElementById("passwordMatchMessage");
+        const lengthRequirement = document.getElementById("lengthRequirement");
+        const uppercaseRequirement = document.getElementById("uppercaseRequirement");
+        const lowercaseRequirement = document.getElementById("lowercaseRequirement");
+        const digitRequirement = document.getElementById("digitRequirement");
+        const specialCharRequirement = document.getElementById("specialCharRequirement");
+        const identityMessage = document.getElementById("identityMessage");
+        const nameMessage = document.getElementById("nameMessage");
+        const userMessage = document.getElementById("userMessage");
+        const eyeIcon1 = document.getElementById("eyeIcon1");
+        const eyeImage1 = document.getElementById("eyeImage1");
+        const eyeIcon2 = document.getElementById("eyeIcon2");
+        const eyeImage2 = document.getElementById("eyeImage2");
+        const formulario = document.getElementById('registrationForm');
+
+        // Cambiar tipo y imagen para la contraseña principal
+        eyeIcon1.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";  // Mostrar la contraseña
+                eyeImage1.src = "public/imagenes/mostrar.png";  // Cambiar imagen a "mostrar"
+                passwordInput.style.paddingRight = "50px";
+            } else {
+                passwordInput.type = "password";  // Ocultar la contraseña
+                eyeImage1.src = "public/imagenes/noMostrar.png";  // Cambiar imagen a "no mostrar"
+            }
+        });
+
+        // Cambiar tipo y imagen para la confirmación de contraseña
+        eyeIcon2.addEventListener("click", function () {
+            if (confirmPasswordInput.type === "password") {
+                confirmPasswordInput.type = "text";  // Mostrar la contraseña
+                eyeImage2.src = "public/imagenes/mostrar.png";  // Cambiar imagen a "mostrar"
+                confirmPasswordInput.style.paddingRight = "50px";
+            } else {
+                confirmPasswordInput.type = "password";  // Ocultar la contraseña
+                eyeImage2.src = "public/imagenes/noMostrar.png";  // Cambiar imagen a "no mostrar"
+            }
+        });
+
+        // Muestra los requisitos de contraseña cuando el input recibe foco
+        passwordInput.addEventListener("focus", function () {
+            passwordRequirements.style.display = "block";
+        });
+
+        // Oculta los requisitos de contraseña cuando el input pierde el foco
+        passwordInput.addEventListener("blur", function () {
+            passwordRequirements.style.display = "none";
+        });
+
+        // Validación en tiempo real de la contraseña
+        passwordInput.addEventListener("input", function () {
+            const password = passwordInput.value;
+
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasDigit = /\d/.test(password);
+            const hasSpecialChar = /[^a-zA-Z0-9\s]/.test(password); // Carácter especial: cualquier cosa que no sea letra o número
+
+            // Longitud mínima
+            if (password.length >= minLength) {
+                lengthRequirement.classList.add("valid");
+                lengthRequirement.classList.remove("invalid");
+            } else {
+                lengthRequirement.classList.add("invalid");
+                lengthRequirement.classList.remove("valid");
+            }
+
+            // Mayúscula
+            if (hasUpperCase) {
+                uppercaseRequirement.classList.add("valid");
+                uppercaseRequirement.classList.remove("invalid");
+            } else {
+                uppercaseRequirement.classList.add("invalid");
+                uppercaseRequirement.classList.remove("valid");
+            }
+
+            // Minúscula
+            if (hasLowerCase) {
+                lowercaseRequirement.classList.add("valid");
+                lowercaseRequirement.classList.remove("invalid");
+            } else {
+                lowercaseRequirement.classList.add("invalid");
+                lowercaseRequirement.classList.remove("valid");
+            }
+
+            // Número
+            if (hasDigit) {
+                digitRequirement.classList.add("valid");
+                digitRequirement.classList.remove("invalid");
+            } else {
+                digitRequirement.classList.add("invalid");
+                digitRequirement.classList.remove("valid");
+            }
+
+            // Carácter especial
+            if (hasSpecialChar) {
+                specialCharRequirement.classList.add("valid");
+                specialCharRequirement.classList.remove("invalid");
+            } else {
+                specialCharRequirement.classList.add("invalid");
+                specialCharRequirement.classList.remove("valid");
+            }
+        });
+
+        // Mostrar mensaje de coincidencia de contraseñas solo cuando el campo está enfocado
+        confirmPasswordInput.addEventListener("focus", function () {
+            passwordMatchMessage.style.display = "block"; // Mostrar el mensaje cuando el campo recibe foco
+
+            // Actualizar el mensaje de coincidencia de contraseñas al recibir el foco
+            if (confirmPasswordInput.value !== passwordInput.value) {
+                passwordMatchMessage.textContent = "Las contraseñas no coinciden";
+                passwordMatchMessage.classList.remove("password-match");
+                passwordMatchMessage.classList.add("password-mismatch");
+            } else {
+                passwordMatchMessage.textContent = "Las contraseñas coinciden";
+                passwordMatchMessage.classList.remove("password-mismatch");
+                passwordMatchMessage.classList.add("password-match");
+            }
+        });
+
+        // Ocultar el mensaje de coincidencia de contraseñas cuando el campo pierde el foco
+        confirmPasswordInput.addEventListener("blur", function () {
+            passwordMatchMessage.style.display = "none"; // Ocultar el mensaje cuando el campo pierde foco
+        });
+
+        // Validación en tiempo real de las contraseñas mientras el usuario escribe
+        confirmPasswordInput.addEventListener("input", function () {
+            if (confirmPasswordInput.value !== passwordInput.value) {
+                passwordMatchMessage.textContent = "Las contraseñas no coinciden";
+                passwordMatchMessage.classList.remove("password-match");
+                passwordMatchMessage.classList.add("password-mismatch");
+            } else {
+                passwordMatchMessage.textContent = "Las contraseñas coinciden";
+                passwordMatchMessage.classList.remove("password-mismatch");
+                passwordMatchMessage.classList.add("password-match");
+            }
+        });
+
+        // Prevenir copiar en los campos de contraseña y confirmacion de contraseña
+        passwordInput.addEventListener("copy", function (event) {
+            event.preventDefault(); // Evita la acción de copiar
+        });
+
+        confirmPasswordInput.addEventListener("copy", function (event) {
+            event.preventDefault(); // Evita la acción de copiar
+        });
+
+        // Prevenir pegar en los campos de contraseña y confirmacion contraseña
+        passwordInput.addEventListener("paste", function (event) {
+            event.preventDefault(); // Evita la acción de pegar
+        });
+
+        confirmPasswordInput.addEventListener("paste", function (event) {
+            event.preventDefault(); // Evita la acción de pegar
+        });
+
+        // Prevenir pegar en el campo de numero de identidad
+        identityInput.addEventListener("paste", function (event) {
+            event.preventDefault(); // Evita la acción de pegar
+        });
+
+        window.onbeforeunload = function () {
+            // Establece la posición de desplazamiento antes de que la página se recargue
+            window.scrollTo(0, 0); // Esto asegura que la página siempre comience desde la parte superior al recargarse
+        };
+
+        // Validación en tiempo real del campo de identidad (formateo con guiones)
+        identityInput.addEventListener("input", function () {
+            let value = this.value.replace(/[^0-9]/g, ""); // Elimina todo lo que no sean números
+            if (value.length <= 4) {
+                this.value = value;
+            } else if (value.length <= 8) {
+                this.value = value.substring(0, 4) + "-" + value.substring(4);
+            } else if (value.length <= 13) {
+                this.value = value.substring(0, 4) + "-" + value.substring(4, 8) + "-" + value.substring(8);
+            } else {
+                this.value = value.substring(0, 4) + "-" + value.substring(4, 8) + "-" + value.substring(8, 13);
+            }
+        });
+
+
+        // VALIDACIÓN CON EL BACKEND
+        const registerButton = document.getElementById("registerButton");
+
+        let codEmpleado = null;
+
+        // Verificación de la existencia del número de identidad en la base de datos
+        identityInput.addEventListener("input", function () {
+            const identityNumber = identityInput.value;
+
+            if (identityNumber.length === 15) { // Verificar si tiene el tamaño adecuado (con guiones)
+                fetch(`http://localhost:3000/existencia_empl/${identityNumber}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (!data) {
+                            identityMessage.textContent = "El número de identidad no existe como empleado.";
+                            identityMessage.style.color = "red";
+                            identityMessage.style.display = "block";
+                        } else {
+                            codEmpleado = data.cod_empleado
+                            // Continuar con la verificación del nombre de usuario
+                            verifyUserExists(data.cod_empleado, identityNumber);
+                        }
+                    })
+                    .catch((error) => console.error(error));
+            } else {
+                identityMessage.textContent = "Ingresa un número de identidad válido.";
+                identityMessage.style.color = "orange";
+                identityMessage.style.display = "block";
+                nameMessage.style.display = "none";
+                userMessage.style.display = "none";
+
+                document.getElementById("nombres").value = "";
+                document.getElementById("apellidos").value = "";
+                document.getElementById("usuario").value = "";
+                document.getElementById("registerButton").disabled = true;
+            }
+        });
+
+
+        // Verificación de la existencia del nombre de usuario
+        function verifyUserExists(cod_empleado, dni_empleado) {
+            fetch(`http://localhost:3000/existencia_usua/${cod_empleado}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data) {
+                        identityMessage.textContent = "El número de identidad ya cuenta con un usuario.";
+                        identityMessage.style.color = "red";
+                        identityMessage.style.display = "block";
+                    } else {
+                        identityMessage.style.display = "none";
+                        enableRegistrationForm(dni_empleado);
+                    }
+                })
+                .catch((error) => console.error(error));
+        }
+
+
+        // Habilitar el botón de registrarme y llenar los campos de nombres y apellidos
+        function enableRegistrationForm(dni_empleado) {
+            fetch(`http://localhost:3000/existencia_empl/${dni_empleado}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido } = data;
+                    document.getElementById("nombres").value = `${primer_nombre} ${segundo_nombre || ''}`;
+                    document.getElementById("apellidos").value = `${primer_apellido} ${segundo_apellido || ''}`;
+                    document.getElementById("usuario").value = `${primer_nombre.charAt(0)}${primer_apellido.toUpperCase()}`;
+                    document.getElementById("usuario").focus();
+
+                    nameMessage.textContent = "*Si su número de identidad no coincide con sus nombres y apellidos por favor contacte a soporte.";
+                    nameMessage.style.color = "blue";
+                    nameMessage.style.display = "block";
+                })
+                .catch((error) => console.error(error));
+        }
+
+
+        // Verificar si el nombre de usuario ya existe
+        // Asociar la misma función a los eventos 'focus' e 'input'
+        userInput.addEventListener("input", handleInputFocus);  // Cuando el usuario empieza a escribir
+        userInput.addEventListener("focus", handleInputFocus);  // Cuando el campo recibe el foco
+
+        // Función que se ejecuta tanto cuando el campo nombre de usuario recibe el foco o cuando se escribe
+        function handleInputFocus() {
+            let usuario = userInput.value;
+
+            // Eliminar caracteres no alfabéticos y convertir a mayúsculas
+            usuario = usuario.replace(/[^a-zA-Z]/g, '').toUpperCase();
+            userInput.value = usuario;
+
+            // Validación del nombre de usuario
+            if (usuario.length > 4) {
+
+                fetch(`http://localhost:3000/existencia_nomb_usua`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        let usernameExists = data.some(user => user.nomb_usuario === usuario);
+                        if (usernameExists) {
+                            userMessage.textContent = "El nombre de usuario ya existe.";
+                            userMessage.style.color = "red";
+                            userMessage.style.display = "block";
+                            document.getElementById("registerButton").disabled = true;
+                        } else {
+                            userMessage.textContent = "*Recuerda tu nombre de usuario para poder iniciar sesión.";
+                            userMessage.style.color = "blue";
+                            userMessage.style.display = "block";
+                            document.getElementById("registerButton").disabled = false;
+                        }
+                    })
+                    .catch((error) => reject(error)); // Manejo de errores en la solicitud
+            } else {
+                userMessage.textContent = "El nombre de usuario es muy corto.";
+                userMessage.style.color = "red";
+                userMessage.style.display = "block";
+            }
+        };
+
+
+        // Enviar la información al servidor
+        formulario.addEventListener('submit', function (event) {
+            let valid = true;
+
+            // Validación de la contraseña
+            const password = passwordInput.value;
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasDigit = /\d/.test(password);
+            const hasSpecialChar = /[^a-zA-Z0-9\s]/.test(password);
+
+            if (password.length < minLength || !hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar) {
+                passwordInput.focus(); // Mueve el cursor al campo de contraseña si no cumple los requisitos
+                valid = false;
+            }
+
+            // Validación de la confirmación de la contraseña
+            if (confirmPasswordInput.value !== password) {
+                confirmPasswordInput.focus(); // Mueve el cursor al campo de confirmación de contraseña si no coinciden
+                valid = false;
+            }
+
+            // Validación del tamaño del nombre de usuario
+            if (userInput.value.length < 5) {
+                userInput.focus(); // Mueve el cursor al campo de confirmación de contraseña si no coinciden
+                valid = false;
+            }
+
+            // Si algún campo es inválido, se evita el envío del formulario
+            if (!valid) {
+                event.preventDefault(); // Evita el envío del formulario
+                return; // Detenemos la ejecución aquí
+            }
+
+            // Si todo es válido, procedemos a enviar la información
+            event.preventDefault(); // Prevenimos el envío estándar del formulario
+            const formData = new FormData(this);
+            const data = {
+                nomb_usuario: document.getElementById("usuario").value,
+                contraseña: document.getElementById("password").value,
+                cod_empleado: codEmpleado,  // Usamos el cod_empleado que obtuvimos antes
+                id_estado_usuario: 1, // Siempre 1
+                tipo_registro: 1, //Siempre 1
+                correo: document.getElementById("email").value
+            };
+
+            fetch('http://localhost:3000/crear_usua', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Usuario creado:', data);
+
+                    // Crear el contenedor del mensaje de éxito flotante
+                    const successMessage = document.createElement("div");
+                    successMessage.classList.add("toast-message");
+
+                    // Crear la imagen del ícono de check
+                    const checkIcon = document.createElement("img");
+                    checkIcon.src = "public/imagenes/check.png"; // Asegúrate de poner la ruta correcta de la imagen
+                    checkIcon.alt = "Check icon"; // Descripción alternativa para accesibilidad
+
+                    // Agregar la imagen antes del texto del mensaje
+                    successMessage.appendChild(checkIcon);
+
+                    // Agregar el texto del mensaje
+                    successMessage.appendChild(document.createTextNode("¡Usuario registrado exitosamente!"));
+
+                    // Agregar la clase "toast-message" para estilizarlo
+                    document.body.appendChild(successMessage);
+
+                    // Desaparecer el mensaje
+                    setTimeout(function () {
+                        successMessage.style.opacity = "0";  // Desvanecer el mensaje
+                        setTimeout(function () {
+                            successMessage.remove();  // Eliminar el mensaje del DOM
+                        }, 500);  // Esperar el tiempo de la transición antes de eliminar
+                        
+                        // Redirigir a otra página después de que el mensaje desaparezca
+                        window.location.href = "login.html"; // Redirigir a la página de login
+                    }, 2500);  // El mensaje desaparecerá después de 2.5 segundos
+                })
+                .catch((error) => console.error('Error:', error));
+        });
+
+    </script>
+</body>
+
+</html>

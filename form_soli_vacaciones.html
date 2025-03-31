@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Solicitud de Vacaciones</title>
+    <link rel="stylesheet" href="public/css/styles_fsv.css">
+</head>
+
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo"
+                    class="nav-logo-img">
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseñarecurso.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Todo lo que vayan a agregar -->
+    <main class="main-content" id="mainContent">
+        <!-- Contenedor principal -->
+        <div class="form-container">
+
+            <!-- Cabecera -->
+            <header class="header">
+                <div class="logo">
+                    <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png"
+                        alt="Logo_Kuattro" />
+                </div>
+            </header>
+            <div class="titulo">
+                <h1>SOLICITUD DE VACACIONES</h1>
+            </div>
+            <hr>
+            <div class="fecha">
+                <p>Fecha: <span id="fechaActual"></span></p>
+            </div>
+
+            <!-- Formulario de solicitud de vacaciones -->
+            <form id="vacacionesForm">
+
+                <!-- Contenedor de datos personales -->
+                <div class="grupo borde">
+                    <label for="nombre">Dirigido a: <b>Departamento de Recursos Humanos</b></label>
+                    <div class="campo">
+                        <label for="nombre">Nombre del colaborador:</label>
+                        <input type="text" id="nombre" name="nombre" readonly required>
+                    </div>
+                    <div class="campo1">
+                        <label for="codigo">Código:</label>
+                        <input type="text" id="codigo" name="codigo" readonly required>
+
+                        <label for="posicion">Posición:</label>
+                        <input type="text" id="posicion" name="posicion" readonly required>
+
+                        <label for="sede">Sede:</label>
+                        <input type="text" id="sede" name="sede" readonly required>
+                    </div>
+                </div>
+
+                <!-- Contenedor de solicitud de vacaciones -->
+                <div class="grupo borde">
+                    <div class="campo2">
+                        <label for="dias">Por este medio solicito</label>
+                        <input type="number" id="diasSolicitados" name="diasSolicitados" step="0.5" min="0.5" required>
+                        <label for="dias">días de vacaciones, en las siguientes fechas:</label>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaInicio">Iniciando el</label>
+                        <input type="date" id="fechaInicio" name="fechaInicio" required>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaFin">hasta el día</label>
+                        <input type="date" id="fechaFin" name="fechaFin" required>
+                        <label for="fechaRegreso">regresando a mis labores</label>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaRegreso">cotidianas el</label>
+                        <input type="date" id="fechaRegreso" name="fechaRegreso" required>
+                    </div>
+                </div>
+
+                <!-- Tabla de días acumulados, otorgados y pendientes -->
+                <div class="grupo borde">
+                    <table class="tabla-vacaciones">
+                        <thead>
+                            <tr>
+                                <th>Días Acumulados</th>
+                                <th>Días Otorgados</th>
+                                <th>Días Pendientes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="number" id="diasAcumulados" name="diasAcumulados" readonly></td>
+                                <td><input type="number" id="diasOtorgados" name="diasOtorgados" readonly>
+                                    <input type="number" id="diasOtorgados2" name="diasOtorgados2"
+                                        style="display: none;" readonly>
+                                </td>
+                                <td><input type="number" id="diasPendientes" name="diasPendientes" readonly>
+                                    <input type="number" id="diasPendientes2" name="diasPendientes2"
+                                        style="display: none;" readonly>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Observaciones -->
+                    <label for="observaciones">Observaciones:</label>
+                    <div class="campo">
+                        <textarea id="observaciones" name="observaciones" rows="5"
+                            placeholder="Escriba aquí sus observaciones..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Botón de envío -->
+                <div class="botones">
+                    <button type="submit" class="submitBtn">Enviar</button>
+                    <button type="reset" class="cancelBtn"
+                        onclick="window.location.href='solicitudes.html'">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Mostrar la fecha actual
+        document.getElementById("fechaActual").textContent = new Date().toLocaleDateString("es-ES");
+
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(event) {
+            event.preventDefault(); // Evita la navegación predeterminada
+            let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+            let submenu = parentLi.querySelector('.submenu');
+            let arrow = parentLi.querySelector('.arrow');
+
+            if (submenu) {
+                submenu.classList.toggle('active'); // Alterna visibilidad del menú
+                parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+            }
+        }
+
+        window.onbeforeunload = function () {
+            // Establece la posición de desplazamiento antes de que la página se recargue
+            window.scrollTo(0, 0); // Esto asegura que la página siempre comience desde la parte superior al recargarse
+        };
+
+
+        // Ajustar tamaño del input
+        function adjustInputWidth(input) {
+            // Crear un span temporal para medir el ancho
+            const tempSpan = document.createElement("span");
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.position = "absolute";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.font = window.getComputedStyle(input).font;
+            tempSpan.textContent = input.value;
+
+            document.body.appendChild(tempSpan);
+
+            // Ajustar el tamaño del input según el ancho del span
+            input.style.width = `${tempSpan.offsetWidth + 25}px`;  // Añadir un pequeño margen
+
+            document.body.removeChild(tempSpan);  // Eliminar el span temporal
+        }
+
+
+        const fechaHoy = new Date().toLocaleDateString('en-CA');
+        document.getElementById("fechaInicio").setAttribute("min", fechaHoy);
+
+        function calcularFechaFin() {
+            const fechaInicio = new Date(document.getElementById("fechaInicio").value);
+            let diasSolicitados = parseFloat(document.getElementById("diasSolicitados").value);
+
+            // Validación
+            if (isNaN(fechaInicio) || !fechaInicio.getTime() || isNaN(diasSolicitados) || diasSolicitados <= 0) {
+                return; // Salir si la fecha o los días solicitados no son válidos
+            }
+
+            let fechaFin = new Date(fechaInicio);
+            let diasRestantes = diasSolicitados;
+
+            while (diasRestantes > 0) {
+
+                if (diasRestantes > 0) {
+                    fechaFin.setDate(fechaFin.getDate() + 1); // Avanzar al siguiente día
+                }
+
+                if (fechaFin.getDay() === 6) {  // Sábado
+                    diasRestantes -= 0.5;  // Restar 0.5 días por sábado
+                } else if (fechaFin.getDay() === 0) {  // Domingo
+                    // No restar días si es domingo
+                } else {  // Lunes a viernes
+                    diasRestantes -= 1;
+                }
+            }
+
+            // Establecer la fecha de fin calculada
+            document.getElementById("fechaFin").setAttribute("min", fechaFin.toLocaleDateString('en-CA'));
+
+            // Calcular la fecha de regreso (un día después de la fecha de fin)
+            fechaFin.setDate(fechaFin.getDate() + 1);
+            document.getElementById("fechaRegreso").setAttribute("min", fechaFin.toLocaleDateString('en-CA'));
+        }
+
+        // Event listener para cuando se cambie la fecha de inicio o los días solicitados
+        document.getElementById("fechaInicio").addEventListener("change", calcularFechaFin);
+
+
+
+        // Validacion con el BACKEND
+        const diasSolicitadosInput = document.getElementById("diasSolicitados");
+        const diasAcumuladosInput = document.getElementById("diasAcumulados");
+        const diasOtorgadosInput = document.getElementById("diasOtorgados");
+        const diasOtorgados2Input = document.getElementById("diasOtorgados2");
+        const diasPendientesInput = document.getElementById("diasPendientes");
+        const diasPendientes2Input = document.getElementById("diasPendientes2");
+        const formulario = document.getElementById("vacacionesForm");
+
+        let idUsuario = null;
+
+        fetch(`http://localhost:3000/datos_empleado_solicitud`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data) {
+                    const { id_usuario, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, cod_empleado, nombre_cargo, nombre_sucursal } = data;
+                    document.getElementById("nombre").value = `${primer_nombre} ${segundo_nombre || ''} ${primer_apellido} ${segundo_apellido || ''}`;
+                    document.getElementById("codigo").value = cod_empleado;
+                    document.getElementById("posicion").value = nombre_cargo;
+                    document.getElementById("sede").value = nombre_sucursal;
+
+                    // Ajustar el tamaño de los inputs
+                    adjustInputWidth(document.getElementById("codigo"));
+                    adjustInputWidth(document.getElementById("posicion"));
+                    adjustInputWidth(document.getElementById("sede"));
+
+                    idUsuario = id_usuario;
+                } else {
+                    console.log('Ocurrio un error');
+                }
+            })
+            .catch((error) => console.error(error));
+
+
+        fetch(`http://localhost:3000/calculo_dias_acumulados`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data) {
+                    // Aquí asignamos el valor recibido desde el servidor al input correspondiente
+                    document.getElementById('diasAcumulados').value = data.diasAcumulados;
+
+                    // Ahora obtenemos el valor de los días acumulados directamente desde la respuesta del servidor
+                    const diasAcumulados = parseFloat(data.diasAcumulados);
+
+                    fetch(`http://localhost:3000/calculo_dias_otorgados`)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data) {
+                                // Asignamos los días otorgados al input correspondiente
+                                document.getElementById('diasOtorgados').value = data.suma_dias_otorgados;
+                                document.getElementById('diasOtorgados2').value = data.suma_dias_otorgados;
+
+                                // Realizamos la resta de días acumulados menos los días otorgados
+                                const diasOtorgados = parseFloat(data.suma_dias_otorgados);
+                                document.getElementById('diasPendientes').value = diasAcumulados - diasOtorgados;
+                                document.getElementById('diasPendientes2').value = diasAcumulados - diasOtorgados;
+                            } else {
+                                console.log('Ocurrió un error al obtener los días otorgados');
+                            }
+                        })
+                        .catch((error) => console.error('Error en la solicitud de días otorgados:', error));
+                } else {
+                    console.log('Ocurrió un error al obtener los días acumulados');
+                }
+            })
+            .catch((error) => console.error('Error en la solicitud de días acumulados:', error));
+
+
+
+        diasSolicitadosInput.addEventListener('keypress', function (e) {
+            const valor = this.value;
+            const tecla = e.key;
+
+            // Permitir números (0-9) y el punto (.)
+            if (/[^0-9.]/.test(tecla)) {
+                e.preventDefault();  // Bloquear cualquier tecla que no sea un número o punto
+            }
+
+            // Permitir solo un punto
+            if (tecla === '.' && valor.includes('.')) {
+                e.preventDefault();  // Si ya hay un punto, evitar que se ingrese otro
+            }
+        });
+
+
+
+        diasSolicitadosInput.addEventListener("input", function () {
+
+            // Obtener los valores de los inputs y convertirlos en números solo una vez
+            const diasAcumulados = parseFloat(diasAcumuladosInput.value);
+            const otorgados = parseFloat(diasOtorgados2Input.value);
+            const pendientes = parseFloat(diasPendientes2Input.value);
+            let diasSolicitados = parseFloat(diasSolicitadosInput.value);
+
+            // Si el input está vacío (NaN o 0), no realizar cambios
+            if (isNaN(diasSolicitados)) {
+                diasOtorgadosInput.value = otorgados;
+                diasPendientesInput.value = pendientes;
+                return;  // Salir de la función para evitar el resto de las condiciones
+            }
+
+            // Calcular los días otorgados y pendientes
+            let diasOtorgados = otorgados;
+            //let diasPendientes = diasAcumulados - diasOtorgados;
+
+            // Si los días solicitados superan el límite, corregirlo
+            if (diasSolicitados > pendientes) {
+                diasSolicitadosInput.value = pendientes;  // Limitar a los días permitidos
+                diasOtorgados += pendientes;  // Actualizar días otorgados con el límite
+            } else {
+                diasOtorgados += diasSolicitados;  // Agregar días solicitados si son válidos
+            }
+
+            // Calcular los días pendientes después de actualizar los días otorgados
+            const diasPendientes = diasAcumulados - diasOtorgados;
+
+            // Asignar los valores actualizados a los inputs correspondientes
+            diasOtorgadosInput.value = diasOtorgados;
+            diasPendientesInput.value = diasPendientes;
+
+            calcularFechaFin();
+        });
+
+
+        formulario.addEventListener('submit', function (event) {
+
+            // Si todo es válido, procedemos a enviar la información
+            event.preventDefault(); // Prevenimos el envío estándar del formulario
+            const formData = new FormData(this);
+            const data = {
+                fecha_solicitud: new Date().toLocaleDateString('en-CA'),
+                fecha_inicio_solicitud: document.getElementById("fechaInicio").value,
+                fecha_final_solicitud: document.getElementById("fechaFin").value,
+                fecha_regreso: document.getElementById("fechaRegreso").value,
+                dias_solicitados: document.getElementById("diasSolicitados").value,
+                dias_acumulados: document.getElementById("diasAcumulados").value,
+                dias_otorgados: document.getElementById("diasOtorgados").value,
+                dias_pendientes: document.getElementById("diasPendientes").value,
+                observaciones_solicitud: document.getElementById("observaciones").value,
+                id_usuario: idUsuario,
+                id_estado: 3,
+                id_tipo_solicitud: 1
+            };
+
+            fetch('http://localhost:3000/crear_solicitud', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Solicitud creada:', data);
+
+                    // Crear el contenedor del mensaje de éxito flotante
+                    const successMessage = document.createElement("div");
+                    successMessage.classList.add("toast-message");
+
+                    // Crear la imagen del ícono de check
+                    const checkIcon = document.createElement("img");
+                    checkIcon.src = "public/imagenes/check.png"; // Asegúrate de poner la ruta correcta de la imagen
+                    checkIcon.alt = "Check icon"; // Descripción alternativa para accesibilidad
+
+                    // Agregar la imagen antes del texto del mensaje
+                    successMessage.appendChild(checkIcon);
+
+                    // Agregar el texto del mensaje
+                    successMessage.appendChild(document.createTextNode("¡Solicitud enviada exitosamente!"));
+
+                    // Agregar la clase "toast-message" para estilizarlo
+                    document.body.appendChild(successMessage);
+
+                    // Desaparecer el mensaje
+                    setTimeout(function () {
+                        successMessage.style.opacity = "0";  // Desvanecer el mensaje
+                        setTimeout(function () {
+                            successMessage.remove();  // Eliminar el mensaje del DOM
+                        }, 500);  // Esperar el tiempo de la transición antes de eliminar
+
+                        // Redirigir a otra página después de que el mensaje desaparezca
+                        window.location.href = "solicitudes.html"; // Redirigir a la página de login
+                    }, 2500);  // El mensaje desaparecerá después de 2.5 segundos
+                })
+                .catch((error) => console.error('Error:', error));
+        });
+
+    </script>
+
+
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

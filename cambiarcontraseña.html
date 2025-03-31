@@ -1,0 +1,445 @@
+HTML:
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambiar Contraseña</title>
+    <link rel="stylesheet" href="public/css/styles_cambiarPassword.css">
+</head>
+
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo"
+                    class="nav-logo-img">
+            </a>
+
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="index.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Todo lo que vayan a agregar -->
+    <main class="main-content" id="mainContent">
+        <!-- Contenedor principal -->
+        <div class="form-container">
+
+            <!-- Formulario de solicitud de vacaciones -->
+            <form id="passwordsForm">
+                <h2>Cambiar Contraseña</h2>
+                <hr />
+
+                <div class="password-container">
+                    <input type="password" id="actualPassword" name="actualPassword" required
+                        placeholder="Contraseña actual" />
+                    <div id="eyeIcon1" class="eye-icon">
+                        <img src="public/imagenes/noMostrar.png" alt="Ver contraseña" id="eyeImage1">
+                    </div>
+                </div>
+                <div id="passwordMatchMessage"></div>
+
+                <div class="password-container">
+                    <input type="password" id="nuevaPassword" name="nuevaPassword" required
+                        placeholder="Contraseña nueva" />
+                    <div id="eyeIcon2" class="eye-icon">
+                        <img src="public/imagenes/noMostrar.png" alt="Ver contraseña" id="eyeImage2">
+                    </div>
+                </div>
+
+                <div id="passwordRequerimientos" class="requirements">
+                    <ul>
+                        <li id="lengthRequirement">Debe tener al menos 8 caracteres.</li>
+                        <li id="uppercaseRequirement">Debe contener al menos una letra mayúscula.</li>
+                        <li id="lowercaseRequirement">Debe contener al menos una letra minúscula.</li>
+                        <li id="digitRequirement">Debe contener al menos un número.</li>
+                        <li id="specialCharRequirement">Debe contener al menos un carácter especial (Ej: @, $, %, etc.).
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="password-container">
+                    <input type="password" id="confirmacionPassword" name="confirmacionPassword" required
+                        placeholder="Confirma tu contraseña" />
+                    <div id="eyeIcon3" class="eye-icon">
+                        <img src="public/imagenes/noMostrar.png" alt="Ver contraseña" id="eyeImage3">
+                    </div>
+                </div>
+                <div id="confirmPasswordMatchMessage"></div>
+
+                <!-- Botón de envío -->
+                <div class="botones">
+                    <button type="submit" id="saveButton" class="saveBtn">Guardar</button>
+                    <button class="cancelBtn" onclick="window.history.back()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // VALIDACIÓN DE LOS INPUTS
+        // Variables
+        const currentPasswordInput = document.getElementById("actualPassword");
+        const newPasswordInput = document.getElementById("nuevaPassword");
+        const confirmPasswordInput = document.getElementById("confirmacionPassword");
+        const passwordMatchMessage = document.getElementById("passwordMatchMessage");
+        const passwordRequirements = document.getElementById("passwordRequerimientos");
+        const confirmPasswordMatchMessage = document.getElementById("confirmPasswordMatchMessage");
+        const lengthRequirement = document.getElementById("lengthRequirement");
+        const uppercaseRequirement = document.getElementById("uppercaseRequirement");
+        const lowercaseRequirement = document.getElementById("lowercaseRequirement");
+        const digitRequirement = document.getElementById("digitRequirement");
+        const specialCharRequirement = document.getElementById("specialCharRequirement");
+        const eyeIcon1 = document.getElementById("eyeIcon1");
+        const eyeImage1 = document.getElementById("eyeImage1");
+        const eyeIcon2 = document.getElementById("eyeIcon2");
+        const eyeImage2 = document.getElementById("eyeImage2");
+        const eyeIcon3 = document.getElementById("eyeIcon3");
+        const eyeImage3 = document.getElementById("eyeImage3");
+        const formulario = document.getElementById('passwordsForm');
+
+        // Cambiar tipo y imagen para la contraseña actual
+        eyeIcon1.addEventListener("click", function () {
+            if (currentPasswordInput.type === "password") {
+                currentPasswordInput.type = "text";  // Mostrar la contraseña
+                eyeImage1.src = "public/imagenes/mostrar.png";  // Cambiar imagen a "mostrar"
+            } else {
+                currentPasswordInput.type = "password";  // Ocultar la contraseña
+                eyeImage1.src = "public/imagenes/noMostrar.png";  // Cambiar imagen a "no mostrar"
+            }
+        });
+
+        // Cambiar tipo y imagen para la contraseña nueva
+        eyeIcon2.addEventListener("click", function () {
+            if (newPasswordInput.type === "password") {
+                newPasswordInput.type = "text";  // Mostrar la contraseña
+                eyeImage2.src = "public/imagenes/mostrar.png";  // Cambiar imagen a "mostrar"
+            } else {
+                newPasswordInput.type = "password";  // Ocultar la contraseña
+                eyeImage2.src = "public/imagenes/noMostrar.png";  // Cambiar imagen a "no mostrar"
+            }
+        });
+
+        // Cambiar tipo y imagen para la confirmación de contraseña
+        eyeIcon3.addEventListener("click", function () {
+            if (confirmPasswordInput.type === "password") {
+                confirmPasswordInput.type = "text";  // Mostrar la contraseña
+                eyeImage3.src = "public/imagenes/mostrar.png";  // Cambiar imagen a "mostrar"
+            } else {
+                confirmPasswordInput.type = "password";  // Ocultar la contraseña
+                eyeImage3.src = "public/imagenes/noMostrar.png";  // Cambiar imagen a "no mostrar"
+            }
+        });
+
+        // Muestra los requisitos de contraseña nueva cuando el input recibe foco
+        newPasswordInput.addEventListener("focus", function () {
+            passwordRequirements.style.display = "block";
+        });
+
+        // Oculta los requisitos de contraseña nueva cuando el input pierde el foco
+        newPasswordInput.addEventListener("blur", function () {
+            passwordRequirements.style.display = "none";
+        });
+
+        // Validación en tiempo real de la contraseña nueva
+        newPasswordInput.addEventListener("input", function () {
+            const password = newPasswordInput.value;
+
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasDigit = /\d/.test(password);
+            const hasSpecialChar = /[^a-zA-Z0-9\s]/.test(password); // Carácter especial: cualquier cosa que no sea letra o número
+
+            // Longitud mínima
+            if (password.length >= minLength) {
+                lengthRequirement.classList.add("valid");
+                lengthRequirement.classList.remove("invalid");
+            } else {
+                lengthRequirement.classList.add("invalid");
+                lengthRequirement.classList.remove("valid");
+            }
+
+            // Mayúscula
+            if (hasUpperCase) {
+                uppercaseRequirement.classList.add("valid");
+                uppercaseRequirement.classList.remove("invalid");
+            } else {
+                uppercaseRequirement.classList.add("invalid");
+                uppercaseRequirement.classList.remove("valid");
+            }
+
+            // Minúscula
+            if (hasLowerCase) {
+                lowercaseRequirement.classList.add("valid");
+                lowercaseRequirement.classList.remove("invalid");
+            } else {
+                lowercaseRequirement.classList.add("invalid");
+                lowercaseRequirement.classList.remove("valid");
+            }
+
+            // Número
+            if (hasDigit) {
+                digitRequirement.classList.add("valid");
+                digitRequirement.classList.remove("invalid");
+            } else {
+                digitRequirement.classList.add("invalid");
+                digitRequirement.classList.remove("valid");
+            }
+
+            // Carácter especial
+            if (hasSpecialChar) {
+                specialCharRequirement.classList.add("valid");
+                specialCharRequirement.classList.remove("invalid");
+            } else {
+                specialCharRequirement.classList.add("invalid");
+                specialCharRequirement.classList.remove("valid");
+            }
+        });
+
+        // Ocultar el mensaje de coincidencia de confirma tu contraseña cuando el campo pierde el foco
+        confirmPasswordInput.addEventListener("blur", function () {
+            confirmPasswordMatchMessage.style.display = "none"; // Ocultar el mensaje cuando el campo pierde foco
+        });
+
+        // Verificar si el nombre de usuario ya existe
+        // Asociar la misma función a los eventos 'focus' e 'input'
+        confirmPasswordInput.addEventListener("input", confirmInputFocus);  // Cuando el usuario empieza a escribir
+        confirmPasswordInput.addEventListener("focus", confirmInputFocus);  // Cuando el campo recibe el foco
+
+        // Función que se ejecuta tanto cuando el campo nombre de usuario recibe el foco o cuando se escribe
+        function confirmInputFocus() {
+            confirmPasswordMatchMessage.style.display = "block";
+
+            if (confirmPasswordInput.value !== newPasswordInput.value) {
+                confirmPasswordMatchMessage.textContent = "Las contraseñas no coinciden";
+                confirmPasswordMatchMessage.classList.remove("password-match");
+                confirmPasswordMatchMessage.classList.add("password-mismatch");
+            } else {
+                confirmPasswordMatchMessage.textContent = "Las contraseñas coinciden";
+                confirmPasswordMatchMessage.classList.remove("password-mismatch");
+                confirmPasswordMatchMessage.classList.add("password-match");
+            }
+        };
+
+        // Prevenir copiar en los campos de contraseña actual, nueva y confirmacion de contraseña
+        currentPasswordInput.addEventListener("copy", function (event) {
+            event.preventDefault(); // Evita la acción de copiar
+        });
+
+        newPasswordInput.addEventListener("copy", function (event) {
+            event.preventDefault(); // Evita la acción de copiar
+        });
+
+        confirmPasswordInput.addEventListener("copy", function (event) {
+            event.preventDefault(); // Evita la acción de copiar
+        });
+
+        // Prevenir pegar en los campos de contraseña actual, nueva y confirmacion contraseña
+        currentPasswordInput.addEventListener("paste", function (event) {
+            event.preventDefault(); // Evita la acción de pegar
+        });
+
+        newPasswordInput.addEventListener("paste", function (event) {
+            event.preventDefault(); // Evita la acción de pegar
+        });
+
+        confirmPasswordInput.addEventListener("paste", function (event) {
+            event.preventDefault(); // Evita la acción de pegar
+        });
+
+
+        
+        // VALIDACIÓN CON EL BACKEND
+        // Verificación de la coincidencia de la contraseña actual
+        currentPasswordInput.addEventListener("input", function () {
+            const data = { contraActual: document.getElementById("actualPassword").value };
+
+            fetch('http://localhost:3000/verificar_contra', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (!data) {
+                        passwordMatchMessage.textContent = "La contraseña actual no es correcta.";
+                        passwordMatchMessage.style.color = "red";
+                        passwordMatchMessage.style.display = "block";
+                        document.getElementById("saveButton").disabled = true;
+                    } else {
+                        passwordMatchMessage.style.display = "none";
+                        document.getElementById("saveButton").disabled = false;
+                    }
+                })
+                .catch((error) => console.error(error));
+        });
+
+
+        // Enviar las contraseñas al servidor
+        formulario.addEventListener('submit', function (event) {
+            let valid = true;
+
+            // Validación de la nueva contraseña
+            const password = newPasswordInput.value;
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasDigit = /\d/.test(password);
+            const hasSpecialChar = /[^a-zA-Z0-9\s]/.test(password);
+
+            if (password.length < minLength || !hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar) {
+                newPasswordInput.focus(); // Mueve el cursor al campo de contraseña si no cumple los requisitos
+                valid = false;
+            }
+
+            // Validación de la confirmación de la contraseña
+            if (confirmPasswordInput.value !== password) {
+                confirmPasswordInput.focus(); // Mueve el cursor al campo de confirmación de contraseña si no coinciden
+                valid = false;
+            }
+
+            // Si algún campo es inválido, se evita el envío del formulario
+            if (!valid) {
+                event.preventDefault(); // Evita el envío del formulario
+                return; // Detenemos la ejecución aquí
+            }
+
+            // Si todo es válido, procedemos a enviar la información
+            event.preventDefault(); // Prevenimos el envío estándar del formulario
+            const formData = new FormData(this);
+            const data = { contraseña: document.getElementById("nuevaPassword").value };
+
+            fetch('http://localhost:3000/cambiar_contra', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Contraseña cambiada:', data);
+
+                    // Crear el contenedor del mensaje de éxito flotante
+                    const successMessage = document.createElement("div");
+                    successMessage.classList.add("toast-message");
+
+                    // Crear la imagen del ícono de check
+                    const checkIcon = document.createElement("img");
+                    checkIcon.src = "public/imagenes/check.png"; // Asegúrate de poner la ruta correcta de la imagen
+                    checkIcon.alt = "Check icon"; // Descripción alternativa para accesibilidad
+
+                    // Agregar la imagen antes del texto del mensaje
+                    successMessage.appendChild(checkIcon);
+
+                    // Agregar el texto del mensaje
+                    successMessage.appendChild(document.createTextNode("¡Contraseña guardada exitosamente!"));
+
+                    // Agregar la clase "toast-message" para estilizarlo
+                    document.body.appendChild(successMessage);
+
+                    // Desaparecer el mensaje
+                    setTimeout(function () {
+                        successMessage.style.opacity = "0";  // Desvanecer el mensaje
+                        setTimeout(function () {
+                            successMessage.remove();  // Eliminar el mensaje del DOM
+                        }, 500);  // Esperar el tiempo de la transición antes de eliminar
+                        
+                        // Redirigir a otra página después de que el mensaje desaparezca
+                        window.location.href = "inicio.html"; // Redirigir a la página de login
+                    }, 2500);  // El mensaje desaparecerá después de 2.5 segundos
+                })
+                .catch((error) => console.error('Error:', error));
+        });
+
+        function toggleSubMenu(event) {
+    event.preventDefault(); // Evita la navegación predeterminada
+    let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+    let submenu = parentLi.querySelector('.submenu');
+    let arrow = parentLi.querySelector('.arrow');
+
+    if (submenu) {
+        submenu.classList.toggle('active'); // Alterna visibilidad del menú
+        parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+    }
+}
+    </script>
+
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

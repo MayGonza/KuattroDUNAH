@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Empleados</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+</head>
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>    
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">Seguridad <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">Mantenimiento <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                </li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Formulario de Registro de Empleados -->
+    <main class="main-content" id="mainContent">
+        <div class="form-container">
+            <h2>Crear Empleados</h2>
+            <form id="empleadoForm">
+                <label for="primer_nombre">Primer Nombre:</label>
+                <input type="text" id="primer_nombre" name="primer_nombre" class="uppercase-input" required>
+
+                <label for="segundo_nombre">Segundo Nombre:</label>
+                <input type="text" id="segundo_nombre" name="segundo_nombre" class="uppercase-input">
+
+                <label for="primer_apellido">Primer Apellido:</label>
+                <input type="text" id="primer_apellido" name="primer_apellido" class="uppercase-input" required>
+
+                <label for="segundo_apellido">Segundo Apellido:</label>
+                <input type="text" id="segundo_apellido" name="segundo_apellido" class="uppercase-input">
+
+                <label for="dni_empleado">DNI:</label>
+                <input type="text" id="dni_empleado" name="dni_empleado" class="uppercase-input" maxlength="15" required placeholder="0000-0000-00000">
+
+                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+
+                <label for="fecha_contratacion">Fecha de Contratación:</label>
+                <input type="date" id="fecha_contratacion" name="fecha_contratacion" required>
+
+                <label for="numero_telefono">Número de Teléfono:</label>
+                <input type="text" id="numero_telefono" name="numero_telefono" maxlength="8" class="uppercase-input" required placeholder="0000-0000">
+
+               
+                <label for="id_tipo_telefono">Tipo de Teléfono:</label>
+                <select id="id_tipo_telefono" name="id_tipo_telefono" required>
+                    <option value="1">Ejecutivo</option>
+                    <option value="2">Personal</option>
+                </select>
+
+                <label for="area">Área:</label>
+                <select id="area" name="area">
+                    <!-- Opciones de área serán cargadas aquí -->
+                </select>
+
+                <label for="genero">Género:</label>
+                <select id="genero" name="genero">
+                    <!-- Opciones de género serán cargadas aquí -->
+                </select>
+
+                <label for="sucursal">Sucursal:</label>
+                <select id="sucursal" name="sucursal">
+                    <!-- Opciones de sucursal serán cargadas aquí -->
+                </select>
+
+
+                <label for="cod_empleado">Codigo de empleado:</label>
+                <input type="int" id="cod_empleado" name="cod_empleado" required>
+
+
+                <button type="submit">Agregar</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Enviar formulario al servidor
+        document.getElementById('empleadoForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const empleadoData = {
+                primer_nombre: document.getElementById('primer_nombre').value,
+                segundo_nombre: document.getElementById('segundo_nombre').value,
+                primer_apellido: document.getElementById('primer_apellido').value,
+                segundo_apellido: document.getElementById('segundo_apellido').value,
+                dni_empleado: document.getElementById('dni_empleado').value,
+                fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+                fecha_contratacion: document.getElementById('fecha_contratacion').value,
+                cod_empleado: document.getElementById('cod_empleado').value,
+                numero_telefono: document.getElementById('numero_telefono').value,
+                id_tipo_telefono: document.getElementById('id_tipo_telefono').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/guardar_empleado', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(empleadoData)
+                });
+
+                const result = await response.json();
+                alert(result.message);
+
+                if (response.ok) {
+                    document.getElementById('empleadoForm').reset();
+                    window.location.href = 'empleado.html';
+                }
+            } catch (error) {
+                console.error('❌ Error en la solicitud:', error);
+                alert('Hubo un problema al crear el empleado.');
+            }
+        });
+
+        // Formatear DNI
+        document.getElementById('dni_empleado').addEventListener('input', function() {
+            let dni = this.value.replace(/\D/g, '');
+            if (dni.length > 4 && dni.length <= 8) {
+                dni = dni.replace(/(\d{4})(\d+)/, '$1-$2');
+            } else if (dni.length > 8) {
+                dni = dni.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3');
+            }
+            this.value = dni;
+        });
+
+        // Convertir nombres y apellidos a mayúsculas automáticamente
+        ['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+
+        // Cargar las opciones de los menús desplegables
+        async function cargarOpciones() {
+            try {
+                // Obtener las áreas
+                const responseAreas = await fetch('http://localhost:3000/areas');
+                const areas = await responseAreas.json();
+                const areaSelect = document.getElementById('area');
+                areas.forEach(area => {
+                    const option = document.createElement('option');
+                    option.value = area.Id_area;
+                    option.textContent = area.nombre_area;
+                    areaSelect.appendChild(option);
+                });
+
+                // Obtener los géneros
+                const responseGeneros = await fetch('http://localhost:3000/generos');
+                const generos = await responseGeneros.json();
+                const generoSelect = document.getElementById('genero');
+                generos.forEach(genero => {
+                    const option = document.createElement('option');
+                    option.value = genero.Id_genero;
+                    option.textContent = genero.nombre_genero;
+                    generoSelect.appendChild(option);
+                });
+
+                // Obtener las sucursales
+                const responseSucursales = await fetch('http://localhost:3000/sucursales');
+                const sucursales = await responseSucursales.json();
+                const sucursalSelect = document.getElementById('sucursal');
+                sucursales.forEach(sucursal => {
+                    const option = document.createElement('option');
+                    option.value = sucursal.Id_sucursal;
+                    option.textContent = sucursal.nombre_sucursal;
+                    sucursalSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error al cargar opciones:', error);
+            }
+        }
+
+          // Ejecutar las funciones al cargar la página
+          document.addEventListener('DOMContentLoaded', () => {
+            cargarOpciones();
+            cargarEmpleado();
+
+            const form = document.getElementById('formEmpleado');
+            form.addEventListener('submit', actualizarEmpleado);
+        });
+    </script>
+
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>

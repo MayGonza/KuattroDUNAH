@@ -1,0 +1,66 @@
+.main-content {
+    padding: 40px;
+    text-align: center;
+}
+
+.main-content h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.main-content p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #ffffff;
+}
+
+.creadores-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* siempre 2 por fila */
+    gap: 30px;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+/* Cuando la pantalla sea menor a 700px, se adapta a 1 */
+@media (max-width: 700px) {
+    .creadores-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.creador-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.creador-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.creador-card img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 3px solid #28a745;
+}
+
+.creador-card h3 {
+    font-size: 1.2rem;
+    color: #28a745;
+    margin-bottom: 5px;
+}
+
+.creador-card p {
+    font-size: 0.95rem;
+    color: #666;
+}
+

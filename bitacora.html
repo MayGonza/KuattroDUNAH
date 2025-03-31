@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo"
+                    class="nav-logo-img">
+            </a>
+            <input type="text" class="search-bar" id="searchBar" placeholder="Buscar...">
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+     <!-- Menú lateral -->
+   <aside class="side-menu" id="sideMenu">
+    <nav>
+        <ul>
+            <li><a href="solicitudes.html">Solicitudes</a></li>
+            <li><a href="Usuarios.html">Usuarios</a></li>
+            <li><a href="empleado.html">Empleado</a></li>
+            <li class="has-submenu">
+                <a href="#" onclick="toggleSubMenu(event)">
+                    Seguridad 
+                    <span class="arrow">▼</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="parametros.html">Parámetros</a></li>
+                    <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#" onclick="toggleSubMenu(event)">
+                    Mantenimiento 
+                    <span class="arrow">▼</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="backup.html">Respaldo y Restauración</a></li>
+                    <li><a href="bitacora.html">Bitácora</a></li>
+                </ul>
+                <li><a href="nosotros.html">Nosotros</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+    <main class="main-content">
+        <h1>Bitácora de Actividades</h1>
+
+
+        <div class="export-container">
+            <button class="btn-pdf" onclick="exportarPDF()">📄 Generar reporte </button>
+        </div>
+
+        <table class="bitacora-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Objeto</th>
+                    <th>Acción</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody id="bitacoraBody">
+                <!-- Registros cargados desde el servidor -->
+            </tbody>
+        </table>
+
+        <div class="pagination-container">
+            <button id="prevPage" onclick="cambiarPagina(-1)">◀ Anterior</button>
+            <span id="pageInfo"></span>
+            <button id="nextPage" onclick="cambiarPagina(1)">Siguiente ▶</button>
+        </div>
+    </main>
+
+    <script>
+        let paginaActual = 1;
+
+    function cargarBitacora() {
+    let url = `http://localhost:3000/bitacora?page=${paginaActual}&limit=10`;// Incluye la paginación
+    console.log("🔍 Cargando bitácora con URL:", url);
+
+    fetch(url)
+        .then(response => response.json())
+        .then(response => {
+            console.log("📌 Datos de la bitácora recibidos:", response);
+            const data = response.data; // AQUI ESTABA EL PROBLEMA
+            const bitacoraBody = document.getElementById("bitacoraBody");
+            bitacoraBody.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                bitacoraBody.innerHTML = '<tr><td colspan="6">No hay registros</td></tr>';
+                return;
+            }
+
+            data.forEach(evento => {
+                const fechaFormateada = new Date(evento.fecha).toLocaleString('es-ES', { 
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false 
+                });
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${evento.id_bitacora}</td>
+                    <td>${fechaFormateada}</td>
+                    <td>${evento.usuario || 'N/A'}</td>
+                    <td>${evento.objeto || 'N/A'}</td>
+                    <td>${evento.acciones}</td>
+                    <td>${evento.descripcion}</td>
+                `;
+                bitacoraBody.appendChild(row);
+            });
+
+            // Opcional: mostrar info de paginación si quieres
+            document.getElementById('pageInfo').innerText = `Página ${response.page} de ${response.totalPages}`;
+        })
+        .catch(error => console.error("❌ Error al cargar la bitácora:", error));
+}
+
+// 🔹 Función para cambiar de página
+function cambiarPagina(valor) {
+    paginaActual += valor;
+    cargarBitacora();
+}
+
+//función exportar PDF
+function exportarPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const fechaGeneracion = new Date().toLocaleString('es-ES');
+    const titulo = "Bitácora de Actividades";
+    const usuario = sessionStorage.getItem('usuario') || 'Usuario';
+
+    // Captura de las filas visibles (las que no están ocultas)
+    const filas = [];
+    const rows = document.querySelectorAll(".bitacora-table tbody tr");
+
+    rows.forEach(row => {
+        if (row.style.display !== 'none') { // Verifica que la fila esté visible
+            const celdas = row.querySelectorAll("td");
+            const fila = [];
+            celdas.forEach(td => {
+                fila.push(td.innerText);
+            });
+            filas.push(fila);
+        }
+    });
+
+    const columnas = ["ID", "Fecha", "Usuario", "Objeto", "Acción", "Descripción"];
+
+    // Si no hay filas para exportar, muestra un mensaje
+    if (filas.length === 0) {
+        doc.text("No se encontraron coincidencias para la búsqueda.", 14, 35);
+        doc.save(`bitacora_${new Date().toISOString().slice(0, 10)}.pdf`);
+        return;
+    }
+
+    // Título y fecha
+    doc.setFontSize(16);
+    doc.text(titulo, 14, 20);
+    doc.setFontSize(10);
+    doc.text(`Generado: ${fechaGeneracion}`, 14, 28);
+
+    // Crear tabla
+    doc.autoTable({
+        startY: 35,
+        head: [columnas],
+        body: filas,
+        theme: 'striped',
+        styles: {
+            fontSize: 9,
+            cellPadding: 3,
+        },
+        headStyles: {
+            fillColor: [40, 167, 69],
+            textColor: 255,
+            halign: 'center'
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+            5: { cellWidth: 60 }
+        },
+        didDrawPage: function (data) {
+            const pageHeight = doc.internal.pageSize.height;
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text(`Sistema Kuattro RRHH - Usuario: ${usuario}`, 14, pageHeight - 10);
+            doc.text(`Página ${doc.internal.getNumberOfPages()}`, 200, pageHeight - 10, { align: 'right' });
+        }
+    });
+
+    doc.save(`bitacora_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", cargarBitacora);
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        function filterUsers() {
+            const input = document.getElementById('searchBar');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('userTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let found = false;
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        if (td[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                tr[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        function toggleSubMenu(event) {
+    event.preventDefault(); // Evita la navegación predeterminada
+    let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+    let submenu = parentLi.querySelector('.submenu');
+    let arrow = parentLi.querySelector('.arrow');
+
+    if (submenu) {
+        submenu.classList.toggle('active'); // Alterna visibilidad del menú
+        parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+    }
+        }
+
+        // Barra para buscar
+        document.getElementById('searchBar').addEventListener('input', function () {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.bitacora-table tbody tr');
+    let found = false;
+
+    rows.forEach(row => {
+        const columnas = row.querySelectorAll('td');
+        let match = false;
+
+        // Verificar en todas las columnas
+        columnas.forEach(col => {
+            if (col.textContent.toLowerCase().includes(searchTerm)) {
+                match = true;
+            }
+        });
+
+        if (match) {
+            row.style.display = '';
+            found = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Manejar mensaje de no resultados
+    const messageRow = document.getElementById('noResultsMessage');
+    if (!found && searchTerm !== '') {
+        if (!messageRow) {
+            const noResultsRow = document.createElement('tr');
+            noResultsRow.id = 'noResultsMessage';
+            noResultsRow.innerHTML = '<td colspan="6">No se encontraron coincidencias para la búsqueda</td>';
+            document.querySelector('.bitacora-table tbody').appendChild(noResultsRow);
+        }
+    } else {
+        if (messageRow) {
+            messageRow.remove();
+        }
+    }
+});
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Código OTP</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/recuperacion.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #mensaje {
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Verificación de Código OTP</h2>
+        <p>Ingrese el código enviado a su correo</p>
+        <input type="text" id="codigo" placeholder="Código de verificación">
+        <button onclick="verificarCodigo()">Verificar</button>
+        <p id="mensaje"></p>
+    </div>
+
+    <script>
+        function verificarCodigo() {
+            const codigo = document.getElementById('codigo').value.trim();
+            if (!codigo) {
+                document.getElementById('mensaje').textContent = 'Por favor, ingrese un código válido.';
+                return;
+            }
+            
+            console.log('📩 Código ingresado:', codigo);
+            
+            fetch('http://localhost:3000/verificar-codigo-db', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo }),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Respuesta procesada:', data);
+                document.getElementById('mensaje').textContent = data.mensaje;
+                setTimeout(() => {
+                    if (data.redirigir) {
+                        window.location.href = data.redirigir;
+                    }
+                }, 1500);
+            })
+            .catch(error => {
+                console.error('❌ Error en fetch:', error);
+                document.getElementById('mensaje').textContent = 'Error en la verificación. Intente de nuevo.';
+            });
+        }
+    </script>
+</body>
+</html>

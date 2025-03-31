@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+              <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <p id="usuarioActivo" class="usuario-activo"></p> <!-- Aquí aparecerá el usuario -->
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>    
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Todo lo que vayan a agregar -->
+    <main class="main-content" id="mainContent">
+        <main class="main-content">
+            <section class="dashboard">
+                <h2></h2>
+        
+                <!-- KPIs principales -->
+                <div class="kpi-container">
+                    <div class="kpi-card" onclick="location.href='empleado.html'">
+                        <div class="icon-wrapper">
+                            <i data-lucide="users"></i>
+                        </div>
+                        <h3>Empleados Totales</h3>
+                        <p id="totalEmpleados">...</p>
+                    </div>
+                    <div class="kpi-card" onclick="location.href='vacaciones.html'">
+                        <div class="icon-wrapper">
+                            <i data-lucide="calendar-check"></i>
+                        </div>
+                        <h3>Vacaciones Pendientes</h3>
+                        <p id="totalVacaciones">0 pendientes</p>
+                    </div>                    
+                    <div class="kpi-card" onclick="location.href='incapacidades.html'">
+                        <div class="icon-wrapper">
+                            <i data-lucide="heart-pulse"></i>
+                        </div>
+                        <h3>Incapacidades Pendientes</h3>
+                        <p id="totalIncapacidades">...</p>
+                    </div>
+                    <div class="kpi-card" onclick="location.href='solicitudes.html'">
+                        <div class="icon-wrapper">
+                            <i data-lucide="bell-ring"></i>
+                        </div>
+                        <h3>Solicitudes Pendientes</h3>
+                        <p id="solicitudesPendientes">...</p>
+                    </div>
+                </div>
+        
+                <!-- Listados recientes -->
+                <div class="recent-section">
+                    <div class="recent-card" onclick="location.href='vacaciones.html'">
+                        <h4>Vacaciones Recientes</h4>
+                        <ul id="listaVacaciones">
+                            <li>Cargando...</li>
+                        </ul>
+                    </div>
+        
+                    <div class="recent-card" onclick="location.href='incapacidades.html'">
+                        <h4>Incapacidades Recientes</h4>
+                        <ul id="listaIncapacidades">
+                            <li>Cargando...</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+    </main>
+
+    <script>
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        function filterUsers() {
+            const input = document.getElementById('searchBar');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('userTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let found = false;
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        if (td[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                tr[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        function toggleSubMenu(event) {
+    event.preventDefault(); // Evita la navegación predeterminada
+    let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+    let submenu = parentLi.querySelector('.submenu');
+    let arrow = parentLi.querySelector('.arrow');
+
+    if (submenu) {
+        submenu.classList.toggle('active'); // Alterna visibilidad del menú
+        parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+    }
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+    // Total empleados
+    fetch('http://localhost:3000/total-empleados')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('totalEmpleados').innerText = data.total;
+        });
+
+    // Solicitudes pendientes
+    fetch('http://localhost:3000/solicitudes-pendientes')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('solicitudesPendientes').innerText = `${data.total ?? 0}`;
+    });
+
+
+    // Vacaciones pendientes
+    fetch('http://localhost:3000/vacaciones-pendientes')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('totalVacaciones').innerText = `${data.total ?? 0} días`;
+    });
+
+
+    // Incapacidades acumuladas
+    fetch('http://localhost:3000/incapacidades-totales')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('totalIncapacidades').innerText = `${data.total ?? 0}`;
+    });
+
+
+    // Vacaciones recientes
+fetch('http://localhost:3000/vacaciones-recientes')
+    .then(res => res.json())
+    .then(data => {
+        const lista = document.getElementById('listaVacaciones');
+        lista.innerHTML = '';
+        if (data.length === 0) {
+            lista.innerHTML = '<li>No hay vacaciones recientes</li>';
+        } else {
+            data.forEach(v => {
+                const li = document.createElement('li');
+                li.innerText = `${v.empleado}: ${v.fecha_inicio} - ${v.fecha_fin} (${v.estado})`;
+                lista.appendChild(li);
+            });
+        }
+    });
+
+// Incapacidades recientes
+fetch('http://localhost:3000/incapacidades-recientes')
+    .then(res => res.json())
+    .then(data => {
+        const lista = document.getElementById('listaIncapacidades');
+        lista.innerHTML = '';
+        if (data.length === 0) {
+            lista.innerHTML = '<li>No hay incapacidades recientes</li>';
+        } else {
+            data.forEach(i => {
+                const li = document.createElement('li');
+                li.innerText = `${i.empleado}: ${i.fecha_inicio} - ${i.fecha_fin} (${i.estado})`;
+                lista.appendChild(li);
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const usuario = sessionStorage.getItem('usuario') || 'Usuario';
+    document.getElementById('usuarioActivo').innerText = usuario;
+});
+
+
+});
+
+    </script>
+    <script>
+        lucide.createIcons();
+    </script>
+    
+
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones.     Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,608 @@
+/* Estilo general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #147d17, #085696); /*<---------- aqui se cambia el color del fondo*/
+}
+
+/* Barra de navegación superior */
+.navbar {
+    background-color: #ffffff;    
+    color: white;
+    width: 100%;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+    display: flex;
+    width: 100%;   
+    align-items: center;  
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.nav-logo-img {
+    max-height: 50px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    color: rgb(36, 36, 36);
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.search-bar {
+    flex-grow: 1;
+    max-width: 650px; /* Ajusta el tamaño máximo de la barra de búsqueda */
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin: 0 20px; /* Espacio a los lados */
+    margin-left: 10%;
+}
+
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: normal;
+    margin-left: auto;
+    z-index: auto;
+}
+
+.user-button {
+    background: none;
+    border: none;
+    color: rgb(36, 36, 36);
+    font-size: 24px;
+    cursor: pointer;
+    margin: 0 20px;
+}
+
+.user-dropdown {
+    display: none;
+    position: fixed;
+    right: 0;
+    margin-top: 45px;
+    margin-right: 7px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.user-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.user-dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.user-dropdown.show {
+    display: block;
+}
+
+/* Menú lateral */
+.side-menu {
+    width: 200px;
+    background-color: #333;
+    padding: 15px;
+    position: fixed;
+    top: 60px; /* Ajusta según la altura de tu navbar */
+    left: -200px; /* Oculto inicialmente */
+    height: 100%;
+    overflow-y: auto;
+    transition: left 0.3s;
+}
+
+.side-menu.open {
+    left: 0; /* Mostrar menú */
+}
+.side-menu nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.side-menu nav ul li {
+    margin: 10px 0;
+}
+
+.side-menu nav ul li a {
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.side-menu nav ul li a:hover {
+    background-color: #575757;
+}
+
+/* Contenido principal */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 20px; /* Ajusta según el ancho del menú lateral */
+    margin-top: 60px; /* Ajusta según la altura de tu navbar */
+    transition: margin-left 0.3s;
+}
+
+.main-content h1 {
+    color: #ffffff;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.main-content.shifted {
+    margin-left: 220px; /* Ajusta según el ancho del menú lateral */
+}
+
+/* Contenedor de la tabla */
+.table-container {
+    width: 90%;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Botón de Crear */
+.btn-createR {
+    display: block;
+    width: 150px;
+    margin: 10px auto;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    margin-left: 1280px;
+}
+
+.btn-create:hover {
+    background: #218838;
+}
+
+
+/* Tabla de roles */
+.roles-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* Estilos para las celdas */
+.roles-table th,
+.roles-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.roles-table th {
+    background: #007bff;
+    color: white;
+}
+
+/* Filas alternas */
+.roles-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Botones de acción */
+.btn-edit {
+    background: #ffc107;
+    color: black;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background: #e0a800;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+.btn-permissions{
+    background: #3bf5ff;
+    color: black;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.btn-permissions:hover {
+    background: #3bf5ff;
+}
+
+/* Footer */
+.footer {
+    background-color: #1c1c1c;   /*<---------- aqui se cambia el color del fondo del footer*/
+    color: white;   /*<---------- aqui se cambia el color de las letras */
+    text-align: center;
+    padding: 10px 20px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+/* Estilos del submenú */
+.submenu {
+    display: none;
+    list-style: none;
+    padding-left: 15px;
+}
+
+.submenu li {
+    margin-top: 5px;
+}
+
+/* Mostrar el submenú cuando tiene la clase 'active' */
+.submenu.active {
+    display: block;
+}
+
+/* Estilos para la flecha */
+.arrow {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+/* Rotar flecha cuando el submenú está abierto */
+.has-submenu.open > a .arrow {
+    transform: rotate(180deg);
+}
+
+/* Flecha volver atras*/
+
+.arrow-shadow {
+    background: #147d17;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s, transform 0.3s;
+    margin-left: 570px;
+   
+}
+
+.arrow-shadow:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    background: #085696;
+}
+
+
+
+/* MODAL */
+.modal {
+    display: none; /* 🔴 Esto es CLAVE: oculta el modal al inicio */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex; /* No lo borres, pero recuerda que display: none lo oculta al inicio */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contenido del Modal */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 30%;
+    max-width: 400px; /* Para evitar que sea demasiado ancho */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative; /* 🔹 IMPORTANTE: No uses "absolute" aquí */
+}
+
+/* Botón de Cerrar */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Estilos para inputs */
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.btn-create {
+    display: block;
+    width: 150px;
+    margin: 10px auto;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+}
+
+.btn-create:hover {
+    background: #218838;
+}
+
+.btn-cancel {
+    display: block;
+    width: 150px;
+    margin: 10px auto;
+    padding: 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+}
+
+.btn-cancel:hover {
+    background: #c82333;
+}
+
+/* Botones del modal */
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.btn-cancel {
+    background: #dc3545;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background: #c82333;
+}
+
+
+/* Estilo general para la tabla */
+.mantenimiento-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* Estilos para las celdas */
+.mantenimiento-table th,
+.mantenimiento-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.mantenimiento-table th {
+    background: #007bff;
+    color: white;
+}
+
+/* Filas alternas */
+.mantenimiento-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Estilos para los checkboxes */
+.permiso {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Botón de guardar */
+.btn-save {
+    background: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background: #218838;
+}
+
+
+/* Contenedor del modal para evitar que la tabla se desborde */
+.modal-contentP {
+    max-width: 90%; /* Para que el modal no sea demasiado grande */
+    width: 500px; /* Ajusta según sea necesario */
+    max-height: 90vh; /* Evita que el modal crezca demasiado */
+    overflow-y: auto; /* Agrega scroll si el contenido es muy grande */
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor de la tabla para que tenga scroll horizontal si es necesario */
+.permissions-table-container {
+    max-height: 300px; /* Ajusta la altura máxima de la tabla */
+    overflow-y: auto; /* Permite el desplazamiento vertical si es necesario */
+    overflow-x: auto; /* Permite el desplazamiento horizontal si es necesario */
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Estilos de la tabla de permisos */
+.permissions-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.permissions-table th, .permissions-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.permissions-table th {
+    background-color: #4CAF50;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.permissions-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.permissions-table tr:hover {
+    background-color: #ddd;
+}
+
+/* Ajuste del tamaño de los checkboxes */
+.permissions-table input[type="checkbox"] {
+    transform: scale(1.2);
+}
+
+@media print {
+    @page {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    body {
+        font-size: 12pt;
+        font-family: Arial, sans-serif; /* Establecer una fuente común */
+    }
+
+    /* Asegúrate de ocultar los botones de acciones y otros elementos innecesarios */
+    .navbar,
+    .btnAbrirModal,
+    .botones,
+    .footer,
+    .btn-impriPDF, /* Asegúrate de incluir el botón de imprimir si tiene una clase específica */
+    .acciones, /* Si hay un contenedor de botones de acción */
+    .btn {
+        display: none !important; /* Usamos !important para asegurar que se aplique */
+    }
+
+    .main-content {
+        margin: auto;
+        width: 100%;
+        margin-top: 50px;  /* Ajustar margen superior si es necesario */
+    }
+
+    .form-container {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+}
+
+
+
+.btn-impriPDF {
+    display: block;
+    width: 150px;
+    margin: 10px auto;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    margin-left: 1280px;
+}
+
+.btn-impriPDF:hover{
+    background: #218838;
+}

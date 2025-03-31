@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/styles_usuarios.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="Usuario.html">Usuario</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                </li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="form-container">
+            <h2>Editar Usuario</h2>
+            <form id="formUsuario">
+                <label for="nomb_usuario">Nombre:</label>
+                <input type="text" id="nomb_usuario" name="nomb_usuario" required>
+
+                <label for="email">Correo:</label>
+                <input type="text" id="email" name="email" required>
+
+
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Cargar los datos del Usuario para editar
+        async function cargarUsuario() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const IdUsuario = urlParams.get('id');
+
+            try {
+                const response = await fetch(`http://localhost:3000/usuario/${IdUsuario}`);
+                const Usuario = await response.json();
+
+                // Llenar el formulario con los datos del Usuario
+                document.getElementById('nomb_usuario').value = Usuario.nomb_usuario;
+                console.log(Usuario.nomb_usuario);
+                document.getElementById('email').value = Usuario.email;
+                console.log(Usuario.email);
+                console.log(Usuario);
+              
+            } catch (error) {
+                console.error('Error al cargar datos del Usuario:', error);
+            }
+        }
+
+        // Enviar los cambios al servidor para actualizar el Usuario
+        async function actualizarUsuario(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const IdUsuario = urlParams.get('id');
+
+            const usuariodata = {
+                nomb_usuario: document.getElementById('nomb_usuario').value,
+                email: document.getElementById('email').value
+            };
+
+            try {
+                const response = await fetch(`http://localhost:3000/actualizar_usuario/${IdUsuario}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(usuariodata),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Usuario actualizado correctamente');
+                    window.location.href = 'usuarios.html'; // Redirige al listado de usuario
+                } else {
+                    alert('Error al actualizar usuario: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error al actualizar usuario:', error);
+            }
+        }
+
+        // Función para cargar opciones (placeholder implementation)
+        function cargarOpciones() {
+            console.log('Opciones cargadas');
+        }
+
+        // Función para formatear el DNI en tiempo real y limitar a 13 dígitos
+        const dniInput = document.getElementById('dni_Usuario');
+        if (dniInput) {
+            dniInput.addEventListener('input', function(event) {
+                let dni = event.target.value.replace(/[^\d]/g, ''); // Solo permite números
+
+                // Limitar a 13 dígitos
+                if (dni.length > 13) {
+                    dni = dni.slice(0, 13);
+                }
+
+                // Aplicar el formato
+                if (dni.length > 4 && dni.length <= 8) {
+                    dni = dni.replace(/(\d{4})(\d+)/, '$1-$2');
+                } else if (dni.length > 8) {
+                    dni = dni.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3');
+                }
+
+                event.target.value = dni;
+            });
+        }
+
+        // Ejecutar las funciones al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarOpciones();
+            cargarUsuario();
+
+            const form = document.getElementById('formUsuario');
+            form.addEventListener('submit', actualizarUsuario);
+        });
+
+        function toggleMenu() {
+        const sideMenu = document.getElementById('sideMenu');
+        const mainContent = document.querySelector('.main-content');
+        sideMenu.classList.toggle('open');
+        mainContent.classList.toggle('shifted');
+    }
+    function toggleUserMenu() {
+        const userDropdown = document.getElementById('userDropdown');
+        userDropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.user-button')) {
+            const dropdowns = document.getElementsByClassName('user-dropdown');
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+    function toggleSubMenu(event) {
+    event.preventDefault(); // Evita la navegación predeterminada
+    let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+    let submenu = parentLi.querySelector('.submenu');
+    let arrow = parentLi.querySelector('.arrow');
+
+    if (submenu) {
+        submenu.classList.toggle('active'); // Alterna visibilidad del menú
+        parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+    }
+    }
+    </script>
+</body>
+</html>

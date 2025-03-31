@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/parametrosstyles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicio.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo" class="nav-logo-img">
+            </a>
+              <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <p id="usuarioActivo" class="usuario-activo"></p> <!-- Aquí aparecerá el usuario -->
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="login.html">Cerrar Sesión</a>
+                </div>
+            </div>    
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+  <main class="main-content" id="mainContent">
+    <h1>Gestión de Parámetros</h1>
+    <div class="btn-container">
+      <button class="button" onclick="crearParametro()">Crear </button>
+      <button class="button" onclick="editarParametro()">Editar </button>
+      <button class="button" onclick="borrarParametro()">Borrar </button>
+      <button class="button" onclick="generarReportePDF()">Generar Reporte PDF</button>
+    </div>
+    <table class="parametros-table" id="tablaParametros">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </main>
+  
+  <footer class="footer"  >
+    <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+  </footer>
+  <script>
+
+
+ function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(event) {
+    event.preventDefault(); // Evita la navegación predeterminada
+    let parentLi = event.target.closest('.has-submenu'); // Encuentra el elemento padre <li>
+    let submenu = parentLi.querySelector('.submenu');
+    let arrow = parentLi.querySelector('.arrow');
+
+    if (submenu) {
+        submenu.classList.toggle('active'); // Alterna visibilidad del menú
+        parentLi.classList.toggle('open'); // Agrega la clase para rotar la flecha
+    }
+    }
+    async function crearParametro() {
+      const nombre = prompt('Ingrese el nombre del parámetro:');
+      const valor = prompt('Ingrese el valor del parámetro:');
+      if (!nombre || !valor) {
+        alert('Debe ingresar valores válidos.');
+        return;
+      }
+      try {
+        const response = await fetch('http://localhost:3000/parametros', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre: nombre.toUpperCase(), valor: valor.toUpperCase() })
+        });
+        if (!response.ok) throw new Error('Error al agregar el parámetro');
+        alert('Parámetro agregado correctamente');
+        cargarParametros();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Hubo un problema al agregar el parámetro.');
+      }
+    }
+
+    async function cargarParametros() {
+      try {
+        const response = await fetch('http://localhost:3000/parametros');
+        if (!response.ok) throw new Error('Error al obtener los datos');
+        const parametros = await response.json();
+        actualizarTabla(parametros);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Hubo un problema al cargar los parámetros.');
+      }
+    }
+    function actualizarTabla(parametros) {
+      const tabla = document.querySelector('#tablaParametros tbody');
+      tabla.innerHTML = '';
+      parametros.forEach(parametro => {
+        let fila = tabla.insertRow();
+        fila.insertCell(0).innerText = parametro.id_parametro;
+        fila.insertCell(1).innerText = parametro.nombre_parametro;
+        fila.insertCell(2).innerText = parametro.valor_parametro;
+      });
+    }
+    function buscarParametro() {
+      const searchValue = document.getElementById('searchBar').value.toLowerCase();
+      document.querySelectorAll('#tablaParametros tbody tr').forEach(fila => {
+        fila.style.display = fila.innerText.toLowerCase().includes(searchValue) ? '' : 'none';
+      });
+    }
+    async function editarParametro() {
+      const id = prompt('Ingrese el ID del parámetro a editar:');
+      if (!id) return;
+      const nombre = prompt('Nuevo nombre del parámetro:');
+      const valor = prompt('Nuevo valor del parámetro:');
+      if (!nombre || !valor) return;
+      try {
+        await fetch(`http://localhost:3000/parametros/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, valor })
+        });
+        cargarParametros();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Hubo un problema al actualizar el parámetro.');
+      }
+    }
+    async function borrarParametro() {
+      const id = prompt('Ingrese el ID del parámetro a borrar:');
+      if (!id || !confirm('¿Está seguro?')) return;
+      try {
+        await fetch(`http://localhost:3000/parametros/${id}`, { method: 'DELETE' });
+        cargarParametros();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Hubo un problema al eliminar el parámetro.');
+      }
+    }
+
+    function generarReportePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const logo = 'public/imagenes/Logo_Kuattro_VFinal_Flat-1.png';
+    doc.addImage(logo, 'PNG', 10, 10, 30, 15);
+
+    // Agregar títulos con el orden corregido
+    doc.setFontSize(18);
+    doc.text('Kuattro Distribuciones', 105, 10, { align: 'center' });
+    doc.text('Reporte de Parámetros', 105, 20, { align: 'center' });
+
+    // Posición inicial de la tabla
+    let y = 30;
+
+    // Establecer color de fondo para el encabezado (azul claro)
+    doc.setFillColor(100, 149, 237); // Azul claro (Cornflower Blue)
+    doc.setTextColor(255, 255, 255); // Texto blanco
+
+    // Dibujar encabezado
+    doc.rect(20, y, 170, 10, 'F'); // Rectángulo de fondo
+    doc.setFontSize(12);
+    doc.text('ID', 30, y + 7);
+    doc.text('Nombre', 80, y + 7);
+    doc.text('Valor', 140, y + 7);
+
+    y += 10;
+
+    // Obtener las filas visibles de la tabla
+    const filas = Array.from(document.querySelectorAll('#tablaParametros tbody tr'))
+        .filter(fila => fila.style.display !== 'none'); // Aquí verificamos 'none' en lugar de 'table'
+
+    // Restaurar color del texto para los datos
+    doc.setTextColor(0, 0, 0); // Negro
+
+    filas.forEach((fila, index) => {
+        y += 10;
+
+        // Alternar colores de fondo (gris para impares)
+        if (index % 2 !== 0) {
+            doc.setFillColor(230, 230, 230); // Gris claro
+            doc.rect(20, y - 7, 170, 10, 'F'); // Dibujar fondo
+        }
+
+        // Obtener celdas y escribir los datos alineados
+        const celdas = fila.querySelectorAll('td');
+        doc.text(celdas[0].innerText, 30, y); // ID alineado a la izquierda
+        doc.text(celdas[1].innerText, 80, y); // Nombre alineado al centro
+        doc.text(celdas[2].innerText, 140, y); // Valor alineado a la derecha
+    });
+
+    // Guardar el PDF
+    doc.save('Reporte_Parametros.pdf');
+}
+
+window.onload = cargarParametros;
+
+  </script>
+</body>
+</html>

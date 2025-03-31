@@ -1,0 +1,406 @@
+
+
+.close {
+    color: auto;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: auto;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+    /* Estilos para el modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+    
+    align-items: center;
+    justify-content: center;
+    }
+
+    .modal-content {
+    background-color: #000000;
+    margin: 5% auto;
+    padding: 0px;
+    border: 0px solid #840000;
+    border-radius: 5px;
+    width: 0%;
+    border-radius: 5px;
+        color: #000000;
+        text-align: center;
+    }
+
+    input [type="text"] {
+        text-align: left;
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+    size: 16px;
+}
+
+    .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+    .requirements {
+    display: none;
+    }
+
+    /*AUTOREGISTRO*/
+form {
+    max-width: 400px;
+    margin: auto;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+form h2{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+label {
+    display: inline-block;
+    margin-top: 12px;
+    margin-bottom: 3px;
+    font-size: 16px;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+
+
+
+button:disabled {
+    cursor: not-allowed; /* Cambia el puntero a no permitido cuando el botón está deshabilitado */
+    background-color: #ddd; /* Cambia el color de fondo cuando está deshabilitado */
+}
+
+/* Estilos para los mensajes */
+.requirements {
+    display: none;
+    color: orange;
+    font-size: 0.8em;
+    margin-top: 10px;
+}
+
+.requirements ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.requirements li {
+    margin-bottom: 5px;
+}
+
+.valid {
+    color: #339900;
+}
+
+.invalid {
+    color: orange;
+}
+
+/* Estilo para el mensaje del campo de identidad */
+#identityMessage, #nameMessage, #userMessage {
+    display: none;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+/* Estilo para el mensaje flotante */
+.toast-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;  /* Verde */
+    color: green;
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 9999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.5s ease-out;  /* Transición suave para desvanecerse */
+}
+
+/* Estilo para el mensaje de coincidencia de contraseñas */
+#passwordMatchMessage {
+    font-size: 0.8em;
+    margin-top: 10px;
+}
+
+.password-match {
+    color: #339900;
+}
+
+.password-mismatch {
+    color: #eabb00;
+}
+
+#yaRegistrado {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #007bff; /* Color verde para el enlace */
+    font-size: 14px;
+    text-decoration: none; /* Elimina el subrayado por defecto */
+}
+
+#yaRegistrado:hover {
+    color: #0056b3; /* Color más oscuro cuando el enlace es hover */
+    text-decoration: underline; /* Subraya el enlace cuando el usuario pasa el cursor sobre él */
+}
+
+/* Contenedor de la tabla */
+.table-container {
+    width: 100%;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Botón de Crear */
+.btn-create {
+    display: block;
+    width: 150px;
+    margin: 10px auto;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    margin-right: -0px;
+}
+
+.btn-create:hover {
+    background: #218838;
+}
+
+/* Tabla de empleados */
+.employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* Estilos para las celdas */
+.employee-table th,
+.employee-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.employee-table th {
+    background: #007bff;
+    color: white;
+}
+
+/* Filas alternas */
+.employee-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Botones de acción */
+.btn-view {
+    background: #17a2b8;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-view:hover {
+    background: #138496;
+}
+
+.btn-edit {
+    background: #ffc107;
+    color: black;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background: #e0a800;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+/* ======================== */
+/* ESTILOS PARA EL MODAL */
+/* ======================== */
+
+/* Fondo del modal */
+.modal {
+    display: none; /* Ocultar modal por defecto */
+    position: fixed; /* Posición fija en la pantalla */
+    z-index: 1000; /* Asegurar que esté por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+.modal-content {
+    background-color: transparent;
+    padding: 20px;
+    border-radius: 10%;
+    width: 50%;
+    max-width: 500px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+}
+
+.modal-content h2 {
+    color: black; /* Asegurar que los títulos y párrafos sean visibles */
+}
+
+.modal-content p{
+    color: #000;
+    text-align: left;
+    
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.close:hover {
+    color: #000;
+}
+
+.btn-close {
+    background-color: #000;
+    color: white;
+    margin-top: 20px;
+}
+
+.btnPDF {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.btnPDF:hover {
+    background-color: #0056b3;
+}
+
+
+.modal-content3 {
+    background-color: white;
+    padding: 20px;
+    border-radius: 2%;
+    width: 50%;
+    max-width: 500px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+
+}
+
+.modal-content3 h2 {
+    color: black; /* Asegurar que los títulos y párrafos sean visibles */
+}
+
+.modal-content3 p{
+    color: #000;
+    text-align: left;
+    
+}

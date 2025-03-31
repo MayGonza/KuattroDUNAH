@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Solicitud</title>
+    <link rel="stylesheet" href="public/css/styles_fsi.css">
+</head>
+
+<body>
+
+    <!-- Encabezado con logo -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <a href="inicioempleados.html" class="nav-logo">
+                <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png" alt="Logo"
+                    class="nav-logo-img">
+            </a>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleUserMenu()">👤</button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="perfil_recurso.html">Perfil</a>
+                    <a href="cambiarcontraseña.html">Cambiar contraseña</a>
+                    <a href="index.html">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <aside class="side-menu" id="sideMenu">
+        <nav>
+            <ul>
+                <li><a href="solicitudes.html">Solicitudes</a></li>
+                <li><a href="Usuarios.html">Usuarios</a></li>
+                <li><a href="empleado.html">Empleado</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Seguridad 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="parametros.html">Parámetros</a></li>
+                        <li><a href="usuarioyseguridad.html">Roles y Permisos</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(event)">
+                        Mantenimiento 
+                        <span class="arrow">▼</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="backup.html">Respaldo y Restauración</a></li>
+                        <li><a href="bitacora.html">Bitácora</a></li>
+                    </ul>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Todo lo que vayan a agregar -->
+    <main class="main-content" id="mainContent">
+        <!-- Contenedor principal -->
+        <div class="form-container">
+
+            <!-- Cabecera -->
+            <header class="header">
+                <div class="logo">
+                    <img src="https://kuattro.hn/wp-content/uploads/2019/03/Logo_Kuattro_VFinal_Flat-1.png"
+                        alt="Logo_Kuattro" />
+                </div>
+            </header>
+            <div class="titulo">
+                <h1>SOLICITUD DE INCAPACIDAD</h1>
+            </div>
+            <hr>
+            <div class="fecha">
+                <p>Fecha: <span id="fechaActual"></span></p>
+            </div>
+
+            <!-- Formulario de solicitud de vacaciones -->
+            <form id="vacacionesForm">
+
+                <!-- Contenedor de datos personales -->
+                <div class="grupo borde">
+                    <label for="nombre">Dirigido a: <b>Departamento de Recursos Humanos</b></label>
+                    <div class="campo">
+                        <label for="nombre">Nombre del colaborador:</label>
+                        <input type="text" id="nombre" name="nombre" readonly>
+                    </div>
+                    <div class="campo1">
+                        <label for="codigo">Código:</label>
+                        <input type="text" id="codigo" name="codigo" readonly>
+
+                        <label for="posicion">Posición:</label>
+                        <input type="text" id="posicion" name="posicion" readonly>
+
+                        <label for="sede">Sede:</label>
+                        <input type="text" id="sede" name="sede" readonly>
+                    </div>
+                </div>
+
+                <!-- Contenedor de solicitud de vacaciones -->
+                <div class="grupo borde">
+                    <div class="campo2">
+                        <label for="dias">Por este medio solicito</label>
+                        <input type="number" id="diasSolicitados" name="diasSolicitados" step="0.5" min="0.5" readonly>
+                        <label for="dias">días de incapacidad, en las siguientes fechas:</label>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaInicio">Iniciando el</label>
+                        <input type="date" id="fechaInicio" name="fechaInicio" readonly>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaFin">hasta el día</label>
+                        <input type="date" id="fechaFin" name="fechaFin" readonly>
+                        <label for="fechaRegreso">regresando a mis labores</label>
+                    </div>
+                    <div class="campos">
+                        <label for="fechaRegreso">cotidianas el</label>
+                        <input type="date" id="fechaRegreso" name="fechaRegreso" readonly>
+                    </div>
+                </div>
+
+                <div class="grupo borde">
+
+                    <!-- Observaciones -->
+                    <label for="observaciones">Observaciones:</label>
+                    <div class="campo">
+                        <textarea id="observaciones" name="observaciones" rows="5"
+                            placeholder="Escriba aquí sus observaciones..."></textarea>
+                    </div>
+
+                    <!-- Apartado para subir imágenes -->
+                    <div>
+                        <!-- Botón para abrir el modal de selección de imagen -->
+                        <button id="abrirModal" class="btnAbrirModal">Subir Imagen</button>
+                    </div>
+
+                    <!-- El Modal -->
+                    <div id="miModal" class="modal">
+                        <div class="modal-contenido">
+                            <span class="cerrar" id="cerrarModal">&times;</span>
+                            <!-- Input file dentro del modal -->
+                            <label for="fileInput" class="seleImagen">Seleccionar Imagen</label>
+                            <input type="file" id="fileInput" class="inputImagen" accept="image/*">
+
+                            <!-- Vista previa de la imagen seleccionada -->
+                            <div id="preview" style="margin-top: 30px;"></div>
+
+                            <!-- Contenedor de los botones centrados -->
+                            <div class="modal-botones">
+                                <!-- Botones de acción -->
+                                <button id="saveButton" class="btnModalGuardar" style="display:none;">Aceptar</button>
+                                <button id="resetButton" class="btnModalCancelar"
+                                    style="display:none;">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Botón de envío -->
+            <div class="botones">
+                <button class="btnPDF" onclick="imprimirFormulario()">Imprimir o Generar PDF</button>
+                <button type="reset" class="cancelBtn"
+                    onclick="window.location.href='hist_solicitudes.html'">Cancelar</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const mainContent = document.getElementById('mainContent');
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+
+        function toggleUserMenu() {
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.classList.toggle('show');
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.user-button')) {
+                const dropdowns = document.getElementsByClassName('user-dropdown');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+
+        window.onbeforeunload = function () {
+            // Establece la posición de desplazamiento antes de que la página se recargue
+            window.scrollTo(0, 0); // Esto asegura que la página siempre comience desde la parte superior al recargarse
+        };
+
+
+        // Ajustar tamaño del input
+        function adjustInputWidth(input) {
+            // Crear un span temporal para medir el ancho
+            const tempSpan = document.createElement("span");
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.position = "absolute";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.font = window.getComputedStyle(input).font;
+            tempSpan.textContent = input.value;
+
+            document.body.appendChild(tempSpan);
+
+            // Ajustar el tamaño del input según el ancho del span
+            input.style.width = `${tempSpan.offsetWidth + 25}px`;  // Añadir un pequeño margen
+
+            document.body.removeChild(tempSpan);  // Eliminar el span temporal
+        }
+
+        // Obtener los elementos del DOM
+        const abrirModal = document.getElementById('abrirModal');
+        const miModal = document.getElementById('miModal');
+        const cerrarModal = document.getElementById('cerrarModal');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const resetButton = document.getElementById('resetButton');
+        const saveButton = document.getElementById('saveButton');
+
+        // Mostrar el modal cuando el usuario haga clic en el botón "Seleccionar Imagen"
+        abrirModal.addEventListener('click', function (event) {
+            event.preventDefault(); // Previene el envío del formulario
+            miModal.style.display = 'flex'; // Cambiar la propiedad para mostrar el modal
+        });
+
+        // Cerrar el modal cuando el usuario haga clic en la "X"
+        cerrarModal.addEventListener('click', function () {
+            miModal.style.display = 'none';
+        })
+
+        // Añadir un event listener para el botón de reset
+        resetButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            // Limpiar el archivo seleccionado
+            fileInput.value = '';  // Esto "desselecciona" el archivo
+
+            // Limpiar el contenido de la vista previa
+            preview.innerHTML = 'No se ha seleccionado ninguna imagen.';
+
+            // Ocultar el botón de cancelación
+            saveButton.style.display = 'none';
+            resetButton.style.display = 'none';
+        });
+
+        // Cerrar el modal si el usuario hace clic fuera del contenido del modal
+        window.addEventListener('click', function (event) {
+            if (event.target === miModal) {
+                miModal.style.display = 'none';
+            }
+        });
+
+        // Añadir un event listener para cuando el usuario seleccione una imagen
+        fileInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+
+            // Verificamos si se ha seleccionado un archivo
+            if (file) {
+                // Crear una URL temporal para mostrar la imagen
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Crear un elemento de imagen para mostrar la imagen seleccionada
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    preview.innerHTML = ''; // Limpiar cualquier contenido previo
+                    preview.appendChild(img); // Añadir la imagen al contenedor
+                };
+                reader.readAsDataURL(file); // Leer la imagen como una URL
+
+                // Mostrar el botón para cancelar la selección
+                saveButton.style.display = 'block';
+                resetButton.style.display = 'block';
+            } else {
+                preview.innerHTML = 'No se ha seleccionado ninguna imagen.';
+                resetButton.style.display = 'none';
+            }
+        });
+
+
+
+        // Validacion con el BACKEND
+
+        document.addEventListener("DOMContentLoaded", cargarDatosSolicitud);
+
+        function cargarDatosSolicitud() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idVerSolicitud = urlParams.get('id');
+
+            fetch(`http://localhost:3000/datos_solicitud/${idVerSolicitud}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data) {
+                        const {
+                            primer_nombre,
+                            segundo_nombre,
+                            primer_apellido,
+                            segundo_apellido,
+                            cod_empleado,
+                            nombre_cargo,
+                            nombre_sucursal,
+                            fecha_solicitud,
+                            fecha_inicio_solicitud,
+                            fecha_final_solicitud,
+                            fecha_regreso,
+                            dias_solicitados,
+                            observaciones_solicitud,
+                            validacion_img } = data;
+
+                        document.getElementById("fechaActual").textContent = new Date(fecha_solicitud).toLocaleDateString("es-ES");
+                        document.getElementById("nombre").value = `${primer_nombre} ${segundo_nombre || ''} ${primer_apellido} ${segundo_apellido || ''}`;
+                        document.getElementById("codigo").value = cod_empleado;
+                        document.getElementById("posicion").value = nombre_cargo;
+                        document.getElementById("sede").value = nombre_sucursal;
+                        document.getElementById("diasSolicitados").value = formatearNumero(dias_solicitados);
+                        document.getElementById("fechaInicio").value = formatoFecha(fecha_inicio_solicitud);
+                        document.getElementById("fechaFin").value = formatoFecha(fecha_final_solicitud);
+                        document.getElementById("fechaRegreso").value = formatoFecha(fecha_regreso);
+                        document.getElementById("observaciones").value = observaciones_solicitud;
+
+                        // Limpiar imágenes previas
+                        const previewContainer = document.getElementById("preview");
+                        previewContainer.innerHTML = ''; // Limpia imágenes anteriores
+
+                        // Comprobar si hay imagen base64
+                        if (validacion_img && validacion_img.data) {
+                            const base64Image = arrayBufferToBase64(validacion_img.data); // Convertir buffer a base64
+                            const imageSrc = `data:image/*;base64,${base64Image}`; // Formatear para que funcione en la etiqueta <img>
+
+                            const imagen = document.createElement('img');
+                            imagen.src = imageSrc;  // Asignamos la imagen base64 directamente al atributo src
+                            imagen.alt = 'Imagen de la solicitud';
+                            previewContainer.appendChild(imagen);
+
+                            fileInput.disabled = true;
+                            const label = document.querySelector('label[for="fileInput"]');
+                            label.style.cursor = 'not-allowed';
+                        } else {
+                            previewContainer.innerHTML = 'No se encontró ninguna imagen. Por favor sube tu constancia.';
+                        }
+
+                        // Ajustar el tamaño de los inputs
+                        adjustInputWidth(document.getElementById("codigo"));
+                        adjustInputWidth(document.getElementById("posicion"));
+                        adjustInputWidth(document.getElementById("sede"));
+                    } else {
+                        console.log('Ocurrió un error');
+                    }
+                })
+                .catch((error) => console.error(error));
+        }
+
+        // Función para convertir ArrayBuffer a base64
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            const length = bytes.byteLength;
+            for (let i = 0; i < length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);  // Convertir a base64
+        }
+
+
+        function formatoFecha(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+
+        function formatearNumero(numero) {
+            // Verificamos si la parte decimal es diferente de cero
+            if (numero % 1 !== 0) {
+                // Si tiene decimales, lo dejamos como decimal
+                return parseFloat(numero).toFixed(1);  // Usamos 1 decimal
+            } else {
+                // Si es entero, lo dejamos como entero (sin decimales)
+                return parseFloat(numero).toFixed(0);  // Sin decimales
+            }
+        }
+
+
+        saveButton.addEventListener('click', function (event) {
+
+            event.preventDefault(); // Prevenimos el envío estándar del formulario
+
+            const formData = new FormData();
+
+            formData.append("imagen", fileInput.files[0]);
+
+            const idVerSolicitud = new URLSearchParams(window.location.search).get('id');  // Obtener el ID desde la URL
+
+            fetch(`http://localhost:3000/subir_imagen/${idVerSolicitud}`, {
+                method: 'PUT',
+                body: formData // Aquí es donde se envía la imagen y los demás campos
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Imagen subida:', data);
+
+                    // Crear el contenedor del mensaje de éxito flotante
+                    const successMessage = document.createElement("div");
+                    successMessage.classList.add("toast-message");
+
+                    // Crear la imagen del ícono de check
+                    const checkIcon = document.createElement("img");
+                    checkIcon.src = "public/imagenes/check.png"; // Asegúrate de poner la ruta correcta de la imagen
+                    checkIcon.alt = "Check icon"; // Descripción alternativa para accesibilidad
+
+                    // Agregar la imagen antes del texto del mensaje
+                    successMessage.appendChild(checkIcon);
+
+                    // Agregar el texto del mensaje
+                    successMessage.appendChild(document.createTextNode("¡Imagen guardada exitosamente!"));
+
+                    // Agregar la clase "toast-message" para estilizarlo
+                    document.body.appendChild(successMessage);
+
+                    // Desaparecer el mensaje
+                    setTimeout(function () {
+                        successMessage.style.opacity = "0";  // Desvanecer el mensaje
+                        setTimeout(function () {
+                            successMessage.remove();  // Eliminar el mensaje del DOM
+                        }, 500);  // Esperar el tiempo de la transición antes de eliminar
+
+                        // Redirigir a otra página después de que el mensaje desaparezca
+                        location.reload(); // Recargar la pagina
+                    }, 2500);  // El mensaje desaparecerá después de 2.5 segundos
+                })
+                .catch((error) => console.error('Error:', error));
+        });
+
+        //Imprimir o generar PDF
+        function imprimirFormulario() {
+            window.print();
+        }
+    </script>
+    <!-- Pie de página común -->
+    <footer class="footer">
+        <p>&copy; Kuattro Distribuciones. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>
